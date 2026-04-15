@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WW2 Grid Runner - Models Ready</title>
+<style>
+body { margin:0; overflow:hidden; background:black; }
+#ui {
+ position:absolute; bottom:20px; left:20px;
+ display:grid; grid-template-columns:60px 60px 60px; gap:10px;
+}
+button { width:60px; height:60px; font-size:20px; }
+</style>
+</head>
+<body>
+
+<div id="ui">
+<button onclick="move('up')">⬆️</button>
+<button onclick="move('left')">⬅️</button>
+<button onclick="move('down')">⬇️</button>
+<button onclick="move('right')">➡️</button>
+</div>
+
+<script type="module">
+import * as THREE from 'https://unpkg.com/three@0.158.0/build/three.module.js';
+import { GLTFLoader } from 'https://unpkg.com/three@0.158.0/examples/jsm/loaders/GLTFLoader.js?module';
+let scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87CEEB);
+
+let camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(0,3,6);
+camera.lookAt(0,0,0);
+
+let renderer = new THREE.WebGLRenderer();
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+let light = new THREE.DirectionalLight(0xffffff,1);
+light.position.set(5,10,5);
+scene.add(light);
+
+// GROUND
+let ground = new THREE.Mesh(
+ new THREE.PlaneGeometry(50,100),
+ new THREE.MeshStandardMaterial({color:0x5a3e1b})
+);
+ground.rotation.x = -Math.PI/2;
+ground.position.y = -2;
+scene.add(ground);
+
+// GRID
+let gridHelper = new THREE.GridHelper(50, 50, 0x00ffcc, 0x004444);
+gridHelper.position.y = -2;
+scene.add(gridHelper);
+
+const loader = new GLTFLoader();
+
+let playerModel, enemyModel, tankModel;
+
+// LOAD MODELS
+loader.load('./models/player.glb', gltf => {
+  playerModel = gltf.scene;
+  playerModel.scale.set(0.8,0.8,0.8);
+  playerModel.rotation.x = Math.PI;
+  scene.add(playerModel);
+}, undefined, error => {
+  console.error('Error loading player model:', error);
+});
+
+loader.load('./models/enemy.glb', gltf => {
+  enemyModel = gltf.scene;
+}, undefined, error => {
+  console.error('Error loading enemy model:', error);
+});
+
+loader.load('./models/tank.glb', gltf => {
+  tankModel = gltf.scene;
+}, undefined, error => {
+  console.error('Error loading tank model:', error);
+});
+
+// GRID
+let playerX=1, playerY=1;
+let targetX=1, targetY=1;
+const spacing=2;
+
+// OBSTACLES
+let obstacles=[];
+
+function spawnObstacle(){
+ let x=Math.floor(Math.random()*3);
+ let y=Math.floor(Math.random()*3);
+
+ let baseModel;
+
+ if(y===0 && tankModel) baseModel = tankModel;
+ else if(enemyModel) baseModel = enemyModel;
+
+ if(!baseModel) return;
+
+ let mesh = baseModel.clone();
+
+ mesh.userData = {x,y,z:-50};
+ scene.add(mesh);
+ obstacles.push(mesh);
+}
+
+// CONTROLS
+window.move=function(dir){
+ if(dir==='left') targetX=Math.max(0,targetX-1);
+ if(dir==='right') targetX=Math.min(2,targetX+1);
+ if(dir==='up') targetY=Math.min(2,targetY+1);
+ if(dir==='down') targetY=Math.max(0,targetY-1);
+};
+
+window.addEventListener('keydown',e=>{
+ if(e.key==='ArrowLeft') move('left');
+ if(e.key==='ArrowRight') move('right');
+ if(e.key==='ArrowUp') move('up');
+ if(e.key==='ArrowDown') move('down');
+});
+
+// UPDATE PLAYER
+function updatePlayer(){
+ if(!playerModel) return;
+
+ playerX += (targetX-playerX)*0.2;
+ playerY += (targetY-playerY)*0.2;
+
+ playerModel.position.x=(playerX-1)*2;
+ playerModel.position.y=(playerY-1)*2;
+ playerModel.position.z=0;
+}
+
+// OBSTACLES
+function updateObstacles(){
+ obstacles.forEach((obs,i)=>{
+  obs.userData.z+=0.7;
+
+  obs.position.x=(obs.userData.x-1)*2;
+  obs.position.y=(obs.userData.y-1)*2;
+  obs.position.z=obs.userData.z;
+
+  let scale=1+(obs.userData.z+50)*0.02;
+  obs.scale.set(scale,scale,scale);
+
+  if(Math.abs(obs.userData.z)<1){
+   if(Math.round(playerX)===obs.userData.x && Math.round(playerY)===obs.userData.y){
+    alert("GAME OVER");
+    location.reload();
+   }
+  }
+
+  if(obs.userData.z>5){
+   scene.remove(obs);
+   obstacles.splice(i,1);
+  }
+ });
+}
+
+setInterval(spawnObstacle,800);
+
+function animate(){
+ requestAnimationFrame(animate);
+ updatePlayer();
+ updateObstacles();
+ renderer.render(scene,camera);
+}
+
+animate();
+</script>
+
+</body>
+</html>
