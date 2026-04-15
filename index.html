@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3D Grid Runner</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: black; }
+    #ui {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      display: grid;
+      grid-template-columns: 60px 60px 60px;
+      gap: 10px;
+    }
+    button {
+      width: 60px;
+      height: 60px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="ui">
+  <button onclick="move('up')">⬆️</button>
+  <button onclick="move('left')">⬅️</button>
+  <button onclick="move('down')">⬇️</button>
+  <button onclick="move('right')">➡️</button>
+</div>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.158/build/three.module.js';
+
+let scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
+
+let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.set(0, 2, 5);
+
+let renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+let light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(0, 10, 5);
+scene.add(light);
+
+// GRID SETTINGS
+const spacing = 2;
+
+// PLAYER
+let playerX = 1;
+let playerY = 1;
+
+const playerGeo = new THREE.ConeGeometry(0.5, 1, 8);
+const playerMat = new THREE.MeshStandardMaterial({ color: 0x00ffcc });
+const player = new THREE.Mesh(playerGeo, playerMat);
+player.rotation.x = Math.PI;
+scene.add(player);
+
+// OBSTACLES
+let obstacles = [];
+
+function spawnObstacle() {
+  const x = Math.floor(Math.random() * 3);
+  const y = Math.floor(Math.random() * 3);
+
+  const geo = new THREE.BoxGeometry(1,1,1);
+  const mat = new THREE.MeshStandardMaterial({ color: 0xff4444 });
+  const mesh = new THREE.Mesh(geo, mat);
+
+  mesh.userData = {
+    x,
+    y,
+    z: -50
+  };
+
+  scene.add(mesh);
+  obstacles.push(mesh);
+}
+
+// MOVEMENT
+window.move = function(dir) {
+  if (dir === 'left') playerX = Math.max(0, playerX - 1);
+  if (dir === 'right') playerX = Math.min(2, playerX + 1);
+  if (dir === 'up') playerY = Math.min(2, playerY + 1);
+  if (dir === 'down') playerY = Math.max(0, playerY - 1);
+};
+
+// UPDATE PLAYER POSITION
+function updatePlayer() {
+  player.position.x = (playerX - 1) * spacing;
+  player.position.y = (playerY - 1) * spacing;
+  player.position.z = 0;
+}
+
+// UPDATE OBSTACLES
+function updateObstacles() {
+  obstacles.forEach((obs, index) => {
+    obs.userData.z += 0.5;
+
+    obs.position.x = (obs.userData.x - 1) * spacing;
+    obs.position.y = (obs.userData.y - 1) * spacing;
+    obs.position.z = obs.userData.z;
+
+    if (Math.abs(obs.userData.z) < 1) {
+      if (obs.userData.x === playerX && obs.userData.y === playerY) {
+        alert("GAME OVER");
+        location.reload();
+      }
+    }
+
+    if (obs.userData.z > 5) {
+      scene.remove(obs);
+      obstacles.splice(index, 1);
+    }
+  });
+}
+
+setInterval(spawnObstacle, 1000);
+
+function animate() {
+  requestAnimationFrame(animate);
+  updatePlayer();
+  updateObstacles();
+  renderer.render(scene, camera);
+}
+
+animate();
+</script>
+
+</body>
+</html>
