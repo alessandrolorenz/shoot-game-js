@@ -191,45 +191,132 @@
             50% { opacity: 0.8; transform: scale(1.05); }
         }
 
+        /* ===== SHOOT MODE BUTTONS ===== */
+        .mode-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            margin-top: 0;
+            padding: 12px 28px;
+            font-size: 17px;
+        }
+
+        .mode-btn.secondary {
+            background: linear-gradient(135deg, #0088ff, #0055cc);
+            box-shadow: 0 4px 15px rgba(0, 136, 255, 0.4);
+        }
+
+        .mode-btn.secondary:hover {
+            box-shadow: 0 6px 20px rgba(0, 136, 255, 0.6);
+        }
+
         /* ===== MOBILE CONTROLS ===== */
         #mobile-controls {
             position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: 20px;
+            left: 20px;
             display: grid;
-            grid-template-columns: 70px 70px 70px;
-            grid-template-rows: 70px 70px;
-            gap: 15px;
+            grid-template-columns: 48px 48px 48px;
+            grid-template-rows: 48px 48px;
+            gap: 8px;
             z-index: 10;
         }
 
         .control-btn {
-            width: 70px;
-            height: 70px;
-            background: rgba(0, 255, 136, 0.3);
-            border: 2px solid rgba(0, 255, 136, 0.6);
-            border-radius: 12px;
-            font-size: 32px;
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 255, 136, 0.25);
+            border: 2px solid rgba(0, 255, 136, 0.5);
+            border-radius: 10px;
+            font-size: 20px;
             color: #fff;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
-            backdrop-filter: blur(10px);
+            transition: all 0.15s ease;
+            backdrop-filter: blur(8px);
             touch-action: manipulation;
         }
 
         .control-btn:active {
-            background: rgba(0, 255, 136, 0.6);
-            transform: scale(0.95);
+            background: rgba(0, 255, 136, 0.55);
+            transform: scale(0.93);
         }
 
         #btn-up { grid-column: 2; grid-row: 1; }
         #btn-left { grid-column: 1; grid-row: 2; }
         #btn-down { grid-column: 2; grid-row: 2; }
         #btn-right { grid-column: 3; grid-row: 2; }
+
+        /* ===== ACTION BUTTONS (shoot + bomb) ===== */
+        #action-btns {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        #btn-bomb {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 100, 0, 0.4);
+            border: 2px solid rgba(255, 160, 0, 0.9);
+            border-radius: 50%;
+            font-size: 26px;
+            color: #fff;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            box-shadow: 0 0 16px rgba(255, 120, 0, 0.7);
+            animation: bombPulse 0.75s infinite;
+        }
+
+        #btn-bomb.visible {
+            display: flex;
+        }
+
+        @keyframes bombPulse {
+            0%, 100% { transform: scale(1);    box-shadow: 0 0 16px rgba(255,120,0,0.7); }
+            50%       { transform: scale(1.12); box-shadow: 0 0 30px rgba(255,200,0,1);   }
+        }
+
+        #btn-shoot {
+            width: 72px;
+            height: 72px;
+            background: rgba(255, 50, 50, 0.35);
+            border: 2px solid rgba(255, 80, 80, 0.85);
+            border-radius: 50%;
+            font-size: 30px;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            transition: all 0.15s ease;
+            box-shadow: 0 0 12px rgba(255, 60, 60, 0.5);
+        }
+
+        #btn-shoot:active {
+            background: rgba(255, 50, 50, 0.7);
+            transform: scale(0.91);
+        }
+
+        #btn-shoot.hidden {
+            display: none;
+        }
 
         /* ===== LOADING INDICATOR ===== */
         #loading {
@@ -272,6 +359,7 @@
 
         @media (min-width: 769px) {
             #mobile-controls { display: none; }
+            #action-btns { display: none; }
         }
     </style>
 </head>
@@ -292,6 +380,7 @@
             <div>Score</div>
             <div id="score">0</div>
             <div id="high-score">High Score: 0</div>
+            <div id="kills-display" style="font-size:15px;color:#ff8844;margin-top:4px;">Kills: 0</div>
         </div>
 
         <!-- Start Screen -->
@@ -310,7 +399,11 @@
                     <span>Space / P</span>
                 </div>
             </div>
-            <button class="btn" id="start-btn">START GAME</button>
+            <p style="margin-top:24px;color:#aaa;font-size:15px;">Choose your shooting mode:</p>
+            <div class="mode-buttons">
+                <button class="btn mode-btn" id="btn-auto-shoot">🤖 Auto Shoot</button>
+                <button class="btn mode-btn secondary" id="btn-manual-shoot">🎯 Manual Shoot</button>
+            </div>
         </div>
 
         <!-- Game Over Screen -->
@@ -327,6 +420,12 @@
             <button class="control-btn" id="btn-left">⬅️</button>
             <button class="control-btn" id="btn-down">⬇️</button>
             <button class="control-btn" id="btn-right">➡️</button>
+        </div>
+
+        <!-- Action Buttons (shoot + bomb) -->
+        <div id="action-btns">
+            <button id="btn-bomb">💣</button>
+            <button id="btn-shoot">🔫</button>
         </div>
     </div>
 
@@ -467,6 +566,9 @@
                 this.particlePositions = null;
                 this.bullets = [];
                 this.lastShootTime = 0;
+                this.shootMode = 'auto';
+                this.destroyedCount = 0;
+                this.bombReady = false;
 
                 this.init();
             }
@@ -902,6 +1004,13 @@
                             case 'S':
                                 this.movePlayer('down');
                                 break;
+                            case ' ':
+                                this.manualShoot();
+                                break;
+                            case 'b':
+                            case 'B':
+                                this.activateBomb();
+                                break;
                         }
                     }
                 });
@@ -923,8 +1032,27 @@
             }
 
             setupUI() {
-                document.getElementById('start-btn').addEventListener('click', () => this.startGame());
+                document.getElementById('btn-auto-shoot').addEventListener('click', () => {
+                    this.shootMode = 'auto';
+                    this.startGame();
+                });
+                document.getElementById('btn-manual-shoot').addEventListener('click', () => {
+                    this.shootMode = 'manual';
+                    this.startGame();
+                });
                 document.getElementById('restart-btn').addEventListener('click', () => this.restartGame());
+
+                document.getElementById('btn-shoot').addEventListener('click', () => this.manualShoot());
+                document.getElementById('btn-shoot').addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.manualShoot();
+                });
+
+                document.getElementById('btn-bomb').addEventListener('click', () => this.activateBomb());
+                document.getElementById('btn-bomb').addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.activateBomb();
+                });
             }
 
             startGame() {
@@ -941,6 +1069,20 @@
                 this.bullets.forEach(b => { this.scene.remove(b); b.geometry.dispose(); });
                 this.bullets = [];
                 this.lastShootTime = 0;
+
+                // Reset kill/bomb state
+                this.destroyedCount = 0;
+                this.bombReady = false;
+                document.getElementById('btn-bomb').classList.remove('visible');
+                document.getElementById('kills-display').textContent = 'Kills: 0';
+
+                // Show/hide shoot button based on mode
+                const shootBtn = document.getElementById('btn-shoot');
+                if (this.shootMode === 'manual') {
+                    shootBtn.classList.remove('hidden');
+                } else {
+                    shootBtn.classList.add('hidden');
+                }
 
                 // Reset player position
                 this.playerTargetPos = { x: 1, y: 0 };
@@ -1053,6 +1195,16 @@
             }
 
             checkAutoShoot() {
+                if (this.shootMode !== 'auto') return;
+                const now = Date.now();
+                if (now - this.lastShootTime >= CONFIG.BULLETS.FIRE_RATE) {
+                    this.createBullet();
+                    this.lastShootTime = now;
+                }
+            }
+
+            manualShoot() {
+                if (this.gameState.state !== 'PLAYING' || this.shootMode !== 'manual') return;
                 const now = Date.now();
                 if (now - this.lastShootTime >= CONFIG.BULLETS.FIRE_RATE) {
                     this.createBullet();
@@ -1090,6 +1242,7 @@
                             if (obs.userData.health <= 0) {
                                 this.scene.remove(obs);
                                 this.obstacles.splice(oi, 1);
+                                this.onEnemyDestroyed();
                             }
                             break;
                         }
@@ -1101,6 +1254,34 @@
                         this.bullets.splice(bi, 1);
                     }
                 }
+            }
+
+            onEnemyDestroyed() {
+                // +100 kill score
+                this.gameState.score += 100;
+                this.gameState.updateUI();
+
+                this.destroyedCount++;
+                document.getElementById('kills-display').textContent = `Kills: ${this.destroyedCount}`;
+
+                // Every 10 kills → earn a bomb
+                if (this.destroyedCount % 10 === 0 && !this.bombReady) {
+                    this.bombReady = true;
+                    document.getElementById('btn-bomb').classList.add('visible');
+                }
+            }
+
+            activateBomb() {
+                if (!this.bombReady || this.gameState.state !== 'PLAYING') return;
+
+                // Destroy all current obstacles
+                for (const obs of this.obstacles) {
+                    this.scene.remove(obs);
+                }
+                this.obstacles = [];
+
+                this.bombReady = false;
+                document.getElementById('btn-bomb').classList.remove('visible');
             }
 
             animate() {
