@@ -5,7 +5,10 @@
       "Bash(cp models/player.glb public/models/player.glb)",
       "Bash(cp models/enemy.glb public/models/enemy.glb)",
       "Bash(cp models/tank.glb public/models/tank.glb)",
-      "Bash(cp models/environment-models/* public/models/environment-models/)"
+      "Bash(cp models/environment-models/* public/models/environment-models/)",
+      "Bash(xargs -I {} basename {})",
+      "Bash(find /c/Users/alessandro.lorenz/Documents/github-projects/Teste_Game/public/models -name \"*.glb\" -exec ls -lh {} \\\\;)",
+      "Bash(du -sh /c/Users/alessandro.lorenz/Documents/github-projects/Teste_Game/public/models/*.glb)"
     ]
   }
 }

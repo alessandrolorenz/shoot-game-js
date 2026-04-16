@@ -2,8 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="3D Grid Runner - Endless runner game with depth-based obstacles">
+
+    <!-- PWA: theme & branding -->
+    <meta name="theme-color" content="#000000">
+    <meta name="msapplication-TileColor" content="#000000">
+
+    <!-- PWA: installability -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
+    <meta name="apple-mobile-web-app-title" content="Grid Runner">
+
+    <!-- iOS home screen icon (iOS reads this, not the manifest icons array) -->
+    <link rel="apple-touch-icon" href="/icons/icon-512.svg">
+
+    <!-- Manifest (also auto-injected by vite-plugin-pwa at build time) -->
+    <link rel="manifest" href="/manifest.webmanifest">
+
     <title>3D Grid Runner</title>
 </head>
 <body>
