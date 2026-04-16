@@ -357,7 +357,7 @@
             },
             CAMERA: {
                 FOV: 70,
-                POSITION: { x: 0, y: 3, z: 6 },
+                POSITION: { x: 0, y: 5, z: 8 },
                 LOOKAT: { x: 0, y: 0, z: -10 }
             },
             GAME: {
@@ -377,7 +377,7 @@
                 FIRE_RATE: 300,
                 DESPAWN_Z: -120,
                 HIT_RADIUS: 2.5,
-                SIZE: 0.15
+                SIZE: 0.45
             }
         };
 
@@ -551,7 +551,7 @@
                 });
                 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
                 ground.rotation.x = -Math.PI / 2;
-                ground.position.y = -5;
+                ground.position.y = -3;
                 ground.receiveShadow = true;
                 this.scene.add(ground);
 
