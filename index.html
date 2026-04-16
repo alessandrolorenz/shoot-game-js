@@ -451,7 +451,7 @@
                 this.playerTargetPos = { x: 1, y: 0 };
                 this.lastSpawnTime = 0;
                 this.loader = new GLTFLoader();
-                this.models = { player: null, enemy: null, tank: null };
+                this.models = { player: null, enemy: null, tank: null, envModels: [] };
                 this.clock = new THREE.Clock();
                 this.groundTiles = [];
                 this.roadStripes = [];
@@ -471,6 +471,7 @@
                 this.setupScrollingEnvironment();
                 this.setupParticles();
                 await this.loadAssets();
+                this.setupSideBuildings();
                 this.createPlayer();
                 this.setupControls();
                 this.setupUI();
@@ -588,42 +589,65 @@
                     this.roadStripes.push(stripe);
                 }
 
-                // === SIDE BUILDINGS ===
-                const buildingCount = 16;
-                for (let i = 0; i < buildingCount; i++) {
-                    for (const side of [-1, 1]) {
-                        const h = 2 + Math.random() * 7;
-                        const w = 1.0 + Math.random() * 1.8;
-                        const d = 1.0 + Math.random() * 1.5;
-                        const hasGlow = Math.random() > 0.5;
-                        const glowColor = Math.random() > 0.5 ? 0x003311 : 0x000a22;
-                        const mat = new THREE.MeshStandardMaterial({
-                            color: 0x080812,
-                            emissive: hasGlow ? glowColor : 0x000000,
-                            emissiveIntensity: 1.0
-                        });
-                        const building = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-                        building.position.set(
-                            side * (8.5 + Math.random() * 2.5),
-                            -3 + h / 2,
-                            -i * 9 - Math.random() * 7
-                        );
-                        this.scene.add(building);
-                        this.sideBuildings.push(building);
+            }
 
-                        // Rooftop accent light on some buildings
-                        if (hasGlow) {
-                            const roofMat = new THREE.MeshBasicMaterial({
-                                color: Math.random() > 0.5 ? 0x00ff88 : 0x0055ff,
-                                transparent: true,
-                                opacity: 0.85
+            setupSideBuildings() {
+                const count = 16;
+                const hasModels = this.models.envModels.length > 0;
+
+                for (let i = 0; i < count; i++) {
+                    for (const side of [-1, 1]) {
+                        let obj;
+
+                        if (hasModels) {
+                            const template = this.models.envModels[
+                                Math.floor(Math.random() * this.models.envModels.length)
+                            ];
+                            obj = template.clone();
+                            const s = 5.5 + Math.random();
+                            obj.scale.setScalar(s);
+                            if (side === 1) obj.rotation.y = Math.PI;
+                            obj.position.set(
+                                side * (8.5 + Math.random() * 2.5),
+                                -3,
+                                -i * 9 - Math.random() * 7
+                            );
+                        } else {
+                            // Fallback: BoxGeometry with optional glow
+                            const h = 2 + Math.random() * 7;
+                            const w = 1.0 + Math.random() * 1.8;
+                            const d = 1.0 + Math.random() * 1.5;
+                            const hasGlow = Math.random() > 0.5;
+                            const glowColor = Math.random() > 0.5 ? 0x003311 : 0x000a22;
+                            const mat = new THREE.MeshStandardMaterial({
+                                color: 0x080812,
+                                emissive: hasGlow ? glowColor : 0x000000,
+                                emissiveIntensity: 1.0
                             });
-                            const roofLight = new THREE.Mesh(new THREE.BoxGeometry(w + 0.1, 0.08, d + 0.1), roofMat);
-                            roofLight.position.copy(building.position);
-                            roofLight.position.y += h / 2;
-                            this.scene.add(roofLight);
-                            this.sideBuildings.push(roofLight);
+                            obj = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+                            obj.position.set(
+                                side * (8.5 + Math.random() * 2.5),
+                                -3 + h / 2,
+                                -i * 9 - Math.random() * 7
+                            );
+
+                            if (hasGlow) {
+                                const roofMat = new THREE.MeshBasicMaterial({
+                                    color: Math.random() > 0.5 ? 0x00ff88 : 0x0055ff,
+                                    transparent: true,
+                                    opacity: 0.85
+                                });
+                                const roof = new THREE.Mesh(new THREE.BoxGeometry(w + 0.1, 0.08, d + 0.1), roofMat);
+                                roof.position.copy(obj.position);
+                                roof.position.y += h / 2;
+                                this.scene.add(roof);
+                                this.sideBuildings.push(roof);
+                            }
                         }
+
+                        obj.castShadow = true;
+                        this.scene.add(obj);
+                        this.sideBuildings.push(obj);
                     }
                 }
             }
@@ -684,6 +708,14 @@
                         loadModel('./models/enemy.glb'),
                         loadModel('./models/tank.glb')
                     ]);
+
+                    const envPaths = [
+                        './models/environment-models/pixellabs-fantasy-signpost-3561.glb',
+                        './models/environment-models/pixellabs-mine-3769.glb',
+                        './models/environment-models/pixellabs-watermill-3425.glb',
+                        './models/environment-models/watchtouwer.glb',
+                    ];
+                    this.models.envModels = (await Promise.all(envPaths.map(loadModel))).filter(Boolean);
                     console.log('Models loaded:', this.models);
                 } catch (error) {
                     console.warn('Error loading models:', error);
