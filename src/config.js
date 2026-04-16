@@ -9,8 +9,8 @@ export const CONFIG = {
     },
     CAMERA: {
         FOV: 70,
-        POSITION: { x: 0, y: 5, z: 8 },
-        LOOKAT: { x: 0, y: 0, z: -10 }
+        POSITION: { x: 0, y: 7, z: 8 },
+        LOOKAT: { x: 0, y: -1, z: -8 }
     },
     GAME: {
         BASE_SPEED: 0.2,
