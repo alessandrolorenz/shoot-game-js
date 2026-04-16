@@ -202,7 +202,7 @@ export class GridRunnerGame {
             updateParticles(this.particlePositions, this.particleSystem, this.gameState.speed);
 
             if (shouldSpawn(this.lastSpawnTime, this.gameState.spawnInterval)) {
-                createObstacle(this.scene, this.obstacles, this.models);
+                createObstacle(this.scene, this.obstacles, this.models, this.gameState);
                 this.lastSpawnTime = currentTime;
             }
 

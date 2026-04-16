@@ -30,5 +30,11 @@ export const CONFIG = {
         DESPAWN_Z: -120,
         HIT_RADIUS: 2.5,
         SIZE: 0.45
+    },
+    ENEMY_DODGE: {
+        SWITCH_Z: -50,    // Z threshold to trigger mid-flight dodge (midpoint of -100→0)
+        SWITCH_SPEED: 0.05, // lerp rate per frame (~20 frames ≈ 0.33s at 60fps)
+        MIN_SPEED: 0.25,  // game speed required before any enemy dodges
+        MAX_CHANCE: 0.65, // cap on dodge probability at high difficulty
     }
 };
