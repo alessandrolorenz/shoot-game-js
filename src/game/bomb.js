@@ -1,9 +1,13 @@
+/**
+ * Called for every enemy destroyed (bullet hit or bomb).
+ * Tracks kills for the bomb-ready threshold and updates the score.
+ * The kills-display DOM element is now owned by levelUI.js / GridRunnerGame.
+ */
 export function onEnemyDestroyed(gameState, destroyedCountRef, bombReadyRef) {
     gameState.score += 100;
     gameState.updateUI();
 
     destroyedCountRef.value++;
-    document.getElementById('kills-display').textContent = `Kills: ${destroyedCountRef.value}`;
 
     if (destroyedCountRef.value % 10 === 0 && !bombReadyRef.value) {
         bombReadyRef.value = true;
@@ -11,7 +15,18 @@ export function onEnemyDestroyed(gameState, destroyedCountRef, bombReadyRef) {
     }
 }
 
-export function activateBomb(obstacles, scene, gameState, bombReadyRef, playerTargetPos) {
+/**
+ * Detonate the bomb — removes all enemies in the player's current lane.
+ *
+ * @param {object[]}     obstacles
+ * @param {THREE.Scene}  scene
+ * @param {object}       gameState
+ * @param {object}       bombReadyRef
+ * @param {{x,y}}        playerTargetPos
+ * @param {Function|null} onKill  Optional callback invoked per removed obstacle
+ *                                so the level manager can count bomb kills.
+ */
+export function activateBomb(obstacles, scene, gameState, bombReadyRef, playerTargetPos, onKill) {
     if (!bombReadyRef.value || gameState.state !== 'PLAYING') return;
 
     const gridX = Math.round(playerTargetPos.x);
@@ -22,6 +37,7 @@ export function activateBomb(obstacles, scene, gameState, bombReadyRef, playerTa
         if (obs.userData.gridX === gridX && obs.userData.gridY === gridY) {
             scene.remove(obs);
             obstacles.splice(i, 1);
+            if (onKill) onKill();
         }
     }
 

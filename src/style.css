@@ -453,6 +453,80 @@ body {
     75% { content: '...'; }
 }
 
+/* ===== LEVEL DISPLAY IN HUD ===== */
+#level-display {
+    font-size: 13px;
+    font-weight: bold;
+    color: #00bbff;
+    margin-top: 4px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(0, 187, 255, 0.5);
+}
+
+/* ===== LEVEL TRANSITION BANNER ===== */
+#level-banner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+    z-index: 150;
+}
+
+#level-banner.visible {
+    display: flex;
+    animation: levelBannerAnim 2s ease forwards;
+}
+
+#level-banner.victory {
+    animation-duration: 3s;
+}
+
+@keyframes levelBannerAnim {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.75); }
+    18%  { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+    32%  { transform: translate(-50%, -50%) scale(1); }
+    70%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+#level-banner-title {
+    font-size: 72px;
+    font-weight: bold;
+    color: #00ff88;
+    text-shadow: 0 0 30px rgba(0, 255, 136, 0.8), 0 0 60px rgba(0, 255, 136, 0.3);
+    line-height: 1;
+    white-space: nowrap;
+}
+
+#level-banner.boss #level-banner-title {
+    color: #ff4444;
+    text-shadow: 0 0 30px rgba(255, 68, 68, 0.8), 0 0 60px rgba(255, 68, 68, 0.3);
+}
+
+#level-banner.victory #level-banner-title {
+    color: #ffd700;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.3);
+}
+
+#level-banner-sub {
+    font-size: 22px;
+    color: #aaa;
+    margin-top: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+    #level-banner-title { font-size: 52px; }
+    #level-banner-sub   { font-size: 16px; }
+}
+
 /* ===== BACK TO MENU BUTTON ===== */
 .btn-back-menu {
     position: absolute;
