@@ -371,6 +371,13 @@
             PLAYER: {
                 MOVE_SPEED: 0.2,
                 SCALE: 2.0
+            },
+            BULLETS: {
+                SPEED: 2.5,
+                FIRE_RATE: 300,
+                DESPAWN_Z: -120,
+                HIT_RADIUS: 2.5,
+                SIZE: 0.15
             }
         };
 
@@ -458,6 +465,8 @@
                 this.sideBuildings = [];
                 this.particleSystem = null;
                 this.particlePositions = null;
+                this.bullets = [];
+                this.lastShootTime = 0;
 
                 this.init();
             }
@@ -529,7 +538,7 @@
 
                 // Hemisphere light for better atmosphere
                 const hemiLight = new THREE.HemisphereLight(0x4488ff, 0x002244, 0.3);
-                // this.scene.add(hemiLight);
+                this.scene.add(hemiLight);
             }
 
             setupEnvironment() {
@@ -773,11 +782,14 @@
                 }
 
                 obstacle.castShadow = true;
+                const isTank = gridY === 0 && this.models.tank;
                 obstacle.userData = {
                     gridX: gridX,
                     gridY: gridY,
                     z: CONFIG.GRID.SPAWN_Z,
-                    baseScale: baseScale
+                    baseScale: baseScale,
+                    health: isTank ? 6 : 2,
+                    type: isTank ? 'tank' : 'enemy'
                 };
 
                 this.updateObstaclePosition(obstacle);
@@ -925,6 +937,11 @@
                 this.obstacles.forEach(obs => this.scene.remove(obs));
                 this.obstacles = [];
 
+                // Clear any existing bullets
+                this.bullets.forEach(b => { this.scene.remove(b); b.geometry.dispose(); });
+                this.bullets = [];
+                this.lastShootTime = 0;
+
                 // Reset player position
                 this.playerTargetPos = { x: 1, y: 0 };
                 this.playerGridPos = { x: 1, y: 0 };
@@ -958,6 +975,10 @@
 
                     // Update obstacles
                     this.updateObstacles(deltaTime);
+
+                    // Auto-shoot and update bullets
+                    this.checkAutoShoot();
+                    this.updateBullets();
 
                     // Update scrolling environment and particles
                     this.updateScrollingEnvironment();
@@ -1012,6 +1033,74 @@
                 }
 
                 this.particleSystem.geometry.attributes.position.needsUpdate = true;
+            }
+
+            // ===== BULLET SYSTEM =====
+
+            createBullet() {
+                const geometry = new THREE.SphereGeometry(CONFIG.BULLETS.SIZE, 6, 6);
+                const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+                const bullet = new THREE.Mesh(geometry, material);
+
+                bullet.position.set(
+                    this.player.position.x,
+                    this.player.position.y,
+                    this.player.position.z - 1.5
+                );
+
+                this.scene.add(bullet);
+                this.bullets.push(bullet);
+            }
+
+            checkAutoShoot() {
+                const now = Date.now();
+                if (now - this.lastShootTime >= CONFIG.BULLETS.FIRE_RATE) {
+                    this.createBullet();
+                    this.lastShootTime = now;
+                }
+            }
+
+            updateBullets() {
+                const speed = CONFIG.BULLETS.SPEED;
+                const hitRadius = CONFIG.BULLETS.HIT_RADIUS;
+
+                for (let bi = this.bullets.length - 1; bi >= 0; bi--) {
+                    const bullet = this.bullets[bi];
+                    bullet.position.z -= speed;
+
+                    if (bullet.position.z < CONFIG.BULLETS.DESPAWN_Z) {
+                        this.scene.remove(bullet);
+                        bullet.geometry.dispose();
+                        this.bullets.splice(bi, 1);
+                        continue;
+                    }
+
+                    let hit = false;
+                    for (let oi = this.obstacles.length - 1; oi >= 0; oi--) {
+                        const obs = this.obstacles[oi];
+                        const dx = bullet.position.x - obs.position.x;
+                        const dy = bullet.position.y - obs.position.y;
+                        const dz = bullet.position.z - obs.position.z;
+                        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+                        if (dist < hitRadius) {
+                            obs.userData.health--;
+                            hit = true;
+
+                            if (obs.userData.health <= 0) {
+                                this.scene.remove(obs);
+                                this.obstacles.splice(oi, 1);
+                            }
+                            break;
+                        }
+                    }
+
+                    if (hit) {
+                        this.scene.remove(bullet);
+                        bullet.geometry.dispose();
+                        this.bullets.splice(bi, 1);
+                    }
+                }
             }
 
             animate() {
