@@ -12,10 +12,39 @@
 
     <!-- UI Overlay -->
     <div class="ui-overlay">
-        <!-- Loading Screen -->
+        <!-- Loading Screen / Splash -->
         <div id="loading">
-            <div class="spinner"></div>
-            <p>Loading Assets...</p>
+            <div class="loading-content">
+                <div class="loading-title">🎮 3D GRID RUNNER</div>
+                <div class="loading-how-to">
+                    <h3>How to Play</h3>
+                    <div class="loading-instructions">
+                        <div class="instruction-card" style="--delay:0.1s">
+                            <div class="instr-keys">↑ ↓ ← →</div>
+                            <div class="instr-label">Move Aircraft</div>
+                        </div>
+                        <div class="instruction-card" style="--delay:0.25s">
+                            <div class="instr-keys">WASD</div>
+                            <div class="instr-label">Also Move</div>
+                        </div>
+                        <div class="instruction-card" style="--delay:0.4s">
+                            <div class="instr-keys">Space</div>
+                            <div class="instr-label">Shoot (Manual)</div>
+                        </div>
+                        <div class="instruction-card" style="--delay:0.55s">
+                            <div class="instr-keys">B</div>
+                            <div class="instr-label">Bomb (5 kills)</div>
+                        </div>
+                    </div>
+                    <p class="loading-tip">Destroy enemies to earn kills — 5 kills unlocks the bomb!</p>
+                </div>
+                <div class="loading-footer">
+                    <div class="loading-bar-track">
+                        <div class="loading-bar-fill"></div>
+                    </div>
+                    <div class="loading-text">Loading assets<span class="loading-dots"></span></div>
+                </div>
+            </div>
         </div>
 
         <!-- HUD -->
@@ -25,6 +54,9 @@
             <div id="high-score">High Score: 0</div>
             <div id="kills-display" style="font-size:15px;color:#ff8844;margin-top:4px;">Kills: 0</div>
         </div>
+
+        <!-- Back to Menu Button (shown during gameplay) -->
+        <button id="btn-back-menu" class="btn-back-menu hidden">&#8592; Menu</button>
 
         <!-- Start Screen -->
         <div id="start-screen">

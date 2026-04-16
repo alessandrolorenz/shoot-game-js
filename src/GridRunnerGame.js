@@ -28,6 +28,9 @@ import {
     hideLoading,
     hideStartScreen,
     hideGameOverScreen,
+    showStartScreen,
+    showBackMenuButton,
+    hideBackMenuButton,
     showShootButton,
     resetBombUI
 } from './ui/menus.js';
@@ -123,6 +126,7 @@ export class GridRunnerGame {
             this.startGame();
         });
         document.getElementById('restart-btn').addEventListener('click', () => this.restartGame());
+        document.getElementById('btn-back-menu').addEventListener('click', () => this.goToMenu());
 
         document.getElementById('btn-shoot').addEventListener('click', () => {
             this.lastShootTime = manualShootFn(
@@ -147,8 +151,22 @@ export class GridRunnerGame {
         });
     }
 
+    goToMenu() {
+        this.obstacles.forEach(obs => this.scene.remove(obs));
+        this.obstacles = [];
+        this.bullets.forEach(b => { this.scene.remove(b); b.geometry.dispose(); });
+        this.bullets = [];
+        hideGameOverScreen();
+        hideBackMenuButton();
+        showStartScreen();
+        this.gameState.setState('MENU');
+        this.playerTargetPos = { x: 1, y: 0 };
+        this.playerGridPos = { x: 1, y: 0 };
+    }
+
     startGame() {
         hideStartScreen();
+        showBackMenuButton();
         this.gameState.reset();
         this.gameState.setState('PLAYING');
         this.lastSpawnTime = Date.now();
@@ -173,6 +191,7 @@ export class GridRunnerGame {
 
     restartGame() {
         hideGameOverScreen();
+        hideBackMenuButton();
         this.startGame();
     }
 
