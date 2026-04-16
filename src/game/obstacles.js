@@ -22,12 +22,38 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
     let obstacle;
     let baseScale;
 
+    // Weights for air-lane enemy types: [enemy, enemyDub, enemyAtomicBomb]
+    // atomicBomb appears ~20% of the time when available
+    let enemyType = 'enemy';
+    if (gridY !== 0) {
+        const hasDub    = !!models.enemyDub;
+        const hasAtomic = !!models.enemyAtomicBomb;
+        const roll = Math.random();
+        if (hasAtomic && roll < 0.20) {
+            enemyType = 'atomicBomb';
+        } else if (hasDub && roll < (hasAtomic ? 0.60 : 0.50)) {
+            enemyType = 'enemyDub';
+        }
+    }
+
     if (gridY === 0 && models.tank) {
         obstacle = models.tank.clone();
         baseScale = 2.5 + Math.random() * 0.5;
         obstacle.scale.set(baseScale, baseScale, baseScale);
         obstacle.rotation.x = 160;
         obstacle.rotation.y = Math.PI / 2;
+    } else if (enemyType === 'atomicBomb' && models.enemyAtomicBomb) {
+        obstacle = models.enemyAtomicBomb.clone();
+        obstacle.rotation.x = 160;
+        obstacle.rotation.y = Math.PI * 2;
+        baseScale = 4.5 + Math.random() * 0.5;
+        obstacle.scale.set(baseScale, baseScale, baseScale);
+    } else if (enemyType === 'enemyDub' && models.enemyDub) {
+        obstacle = models.enemyDub.clone();
+        obstacle.rotation.x = 160;
+        obstacle.rotation.y = Math.PI * 2;
+        baseScale = 4.5 + Math.random() * 0.5;
+        obstacle.scale.set(baseScale, baseScale, baseScale);
     } else if (models.enemy) {
         obstacle = models.enemy.clone();
         obstacle.rotation.x = 160;
@@ -42,7 +68,8 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
     }
 
     obstacle.castShadow = true;
-    const isTank = gridY === 0 && models.tank;
+    const isTank      = gridY === 0 && models.tank;
+    const isAtomicBomb = enemyType === 'atomicBomb' && gridY !== 0;
 
     // ── Dodge probability ──────────────────────────────────────────────────
     // Level config takes precedence; fall back to the original speed-based
@@ -57,7 +84,7 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
         dodgeChance = Math.min(CONFIG.ENEMY_DODGE.MAX_CHANCE, speedFactor * CONFIG.ENEMY_DODGE.MAX_CHANCE);
     }
 
-    const willDodge     = !isTank && Math.random() < dodgeChance;
+    const willDodge     = !isTank && !isAtomicBomb && Math.random() < dodgeChance;
     // Multi-dodge: enemy keeps re-arming after each completed lane switch
     const canMultiDodge = willDodge && !isTank && !!(levelConfig && levelConfig.multiDodge);
 
@@ -67,7 +94,8 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
         z:              CONFIG.GRID.SPAWN_Z,
         baseScale,
         health:         isTank ? 6 : 2,
-        type:           isTank ? 'tank' : 'enemy',
+        type:           isTank ? 'tank' : (isAtomicBomb ? 'atomicBomb' : 'enemy'),
+        bulletProof:    isAtomicBomb,
         isBoss:         false,
         // Dodge state
         willDodge,
