@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /c/Users/alessandro.lorenz/Documents/github-projects/Teste_Game/*.json /c/Users/alessandro.lorenz/Documents/github-projects/Teste_Game/*.md)",
+      "Bash(cp models/player.glb public/models/player.glb)",
+      "Bash(cp models/enemy.glb public/models/enemy.glb)",
+      "Bash(cp models/tank.glb public/models/tank.glb)",
+      "Bash(cp models/environment-models/* public/models/environment-models/)"
+    ]
+  }
+}

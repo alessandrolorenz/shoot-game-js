@@ -1,0 +1,34 @@
+export const CONFIG = {
+    GRID: {
+        X_POSITIONS: 3,
+        Y_POSITIONS: 3,
+        SPACING: 2.5,
+        SPAWN_Z: -100,
+        DESPAWN_Z: 5,
+        COLLISION_THRESHOLD: 1.5
+    },
+    CAMERA: {
+        FOV: 70,
+        POSITION: { x: 0, y: 5, z: 8 },
+        LOOKAT: { x: 0, y: 0, z: -10 }
+    },
+    GAME: {
+        BASE_SPEED: 0.2,
+        BASE_SPAWN_INTERVAL: 1000,
+        SPEED_INCREASE: 1.08,
+        SPAWN_DECREASE: 0.95,
+        DIFFICULTY_INTERVAL: 10000,
+        MAX_OBSTACLES: 20
+    },
+    PLAYER: {
+        MOVE_SPEED: 0.2,
+        SCALE: 2.0
+    },
+    BULLETS: {
+        SPEED: 2.5,
+        FIRE_RATE: 300,
+        DESPAWN_Z: -120,
+        HIT_RADIUS: 2.5,
+        SIZE: 0.45
+    }
+};
