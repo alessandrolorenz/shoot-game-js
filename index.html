@@ -529,7 +529,7 @@
 
                 // Hemisphere light for better atmosphere
                 const hemiLight = new THREE.HemisphereLight(0x4488ff, 0x002244, 0.3);
-                this.scene.add(hemiLight);
+                // this.scene.add(hemiLight);
             }
 
             setupEnvironment() {
@@ -727,7 +727,7 @@
                     this.player = this.models.player.clone();
                     this.player.scale.set(2.4, 2.4, 2.4);
                     // this.player.rotation.x = Math.PI;
-                    this.player.rotation.y = Math.PI / -2; 
+                    this.player.rotation.y = Math.PI; 
 
                 } else {
                     // Fallback: Create geometric player
