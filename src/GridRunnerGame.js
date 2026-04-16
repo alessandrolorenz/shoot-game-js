@@ -102,7 +102,7 @@ export class GridRunnerGame {
                 );
             },
             activateBomb: () => activateBombFn(
-                this.obstacles, this.scene, this.gameState, this.bombReady
+                this.obstacles, this.scene, this.gameState, this.bombReady, this.playerTargetPos
             ),
             startGame: () => this.startGame(),
             restartGame: () => this.restartGame()
@@ -139,11 +139,11 @@ export class GridRunnerGame {
         });
 
         document.getElementById('btn-bomb').addEventListener('click', () =>
-            activateBombFn(this.obstacles, this.scene, this.gameState, this.bombReady)
+            activateBombFn(this.obstacles, this.scene, this.gameState, this.bombReady, this.playerTargetPos)
         );
         document.getElementById('btn-bomb').addEventListener('touchstart', (e) => {
             e.preventDefault();
-            activateBombFn(this.obstacles, this.scene, this.gameState, this.bombReady);
+            activateBombFn(this.obstacles, this.scene, this.gameState, this.bombReady, this.playerTargetPos);
         });
     }
 
