@@ -296,7 +296,7 @@ export class GridRunnerGame {
             updatePlayerPosition(this.player, this.playerGridPos, this.playerTargetPos);
 
             updateObstacles(
-                this.obstacles, this.scene, this.gameState, this.playerGridPos,
+                this.obstacles, this.scene, this.gameState, this.playerTargetPos,
                 () => this._onObstacleDespawned()
             );
 

@@ -169,12 +169,14 @@ export function updateObstacles(obstacles, scene, gameState, playerGridPos, onDe
         updateObstaclePosition(obstacle);
 
         // ── Player collision ──────────────────────────────────────────────
-        if (Math.abs(obstacle.userData.z) < CONFIG.GRID.COLLISION_THRESHOLD) {
-            const playerX = Math.round(playerGridPos.x);
-            const playerY = Math.round(playerGridPos.y);
+        // Only test while the obstacle is still approaching (z <= 0).
+        // Using playerTargetPos (integer) means the player's dodge is
+        // registered the instant they press a key, not mid-lerp.
+        if (obstacle.userData.z >= -CONFIG.GRID.COLLISION_THRESHOLD &&
+            obstacle.userData.z <= 0) {
 
-            if (playerX === obstacle.userData.gridX &&
-                playerY === obstacle.userData.gridY) {
+            if (playerGridPos.x === obstacle.userData.gridX &&
+                playerGridPos.y === obstacle.userData.gridY) {
                 gameState.gameOver();
                 return;
             }

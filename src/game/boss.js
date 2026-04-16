@@ -15,10 +15,11 @@ import * as THREE from 'three';
 import { CONFIG } from '../config.js';
 
 const BOSS_Z          = -35;          // fixed depth
-const BOSS_SHOOT_MS   = 1500;         // ms between salvos
+const BOSS_SHOOT_MS   = 3000;         // ms between salvos
 const BOSS_BULLET_SPD = 0.14;         // Z units per frame
 const BOSS_BULLET_RAD = 0.55;         // visual radius
-const BOSS_HIT_RADIUS = 2.0;          // collision radius for boss bullets vs player
+const BOSS_HIT_RADIUS = 0.5;          // collision radius for boss bullets vs player
+const BOSS_FIRST_SHOT_DELAY = 3000;   // grace period before the very first salvo
 
 // ── Creation ─────────────────────────────────────────────────────────────────
 
@@ -56,7 +57,7 @@ export function createBoss(scene, obstacles, models, health = 30) {
         type:           'boss',
         isBoss:         true,
         bossTime:       0,
-        lastShootTime:  0,
+        lastShootTime:  Date.now() + BOSS_FIRST_SHOT_DELAY - BOSS_SHOOT_MS,
         // Dummy fields expected by updateObstaclePosition / dodge logic
         willDodge:      false,
         dodging:        false,
@@ -145,15 +146,15 @@ function _spawnBossBullet(scene, bossBullets, x, y, z) {
 export function updateBossBullets(bossBullets, scene, playerGridPos, gameState) {
     if (gameState.state !== 'PLAYING') return;
 
-    const playerWorldX = (playerGridPos.x - 1) * CONFIG.GRID.SPACING;
+    const playerWorldX = (Math.round(playerGridPos.x) - 1) * CONFIG.GRID.SPACING;
     const playerWorldY = (Math.round(playerGridPos.y) - 1) * CONFIG.GRID.SPACING;
 
     for (let i = bossBullets.length - 1; i >= 0; i--) {
         const b = bossBullets[i];
         b.position.z += BOSS_BULLET_SPD;
 
-        // Hit-test when bullet reaches the player's Z plane
-        if (b.position.z >= -CONFIG.GRID.COLLISION_THRESHOLD) {
+        // Hit-test only while the bullet is still approaching (not past the player)
+        if (b.position.z >= -CONFIG.GRID.COLLISION_THRESHOLD && b.position.z <= 0) {
             const dx   = b.position.x - playerWorldX;
             const dy   = b.position.y - playerWorldY;
             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -162,6 +163,7 @@ export function updateBossBullets(bossBullets, scene, playerGridPos, gameState) 
                 // Player hit — clean up all projectiles then trigger game over
                 bossBullets.forEach(bb => { if (bb.parent) scene.remove(bb); });
                 bossBullets.length = 0;
+                console.log('Player hit by boss bullet!');
                 gameState.gameOver();
                 return;
             }
