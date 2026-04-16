@@ -447,13 +447,18 @@
                 this.renderer = null;
                 this.player = null;
                 this.obstacles = [];
-                this.playerGridPos = { x: 1, y: 1 };
-                this.playerTargetPos = { x: 1, y: 1 };
+                this.playerGridPos = { x: 1, y: 0 };
+                this.playerTargetPos = { x: 1, y: 0 };
                 this.lastSpawnTime = 0;
                 this.loader = new GLTFLoader();
                 this.models = { player: null, enemy: null, tank: null };
                 this.clock = new THREE.Clock();
-                
+                this.groundTiles = [];
+                this.roadStripes = [];
+                this.sideBuildings = [];
+                this.particleSystem = null;
+                this.particlePositions = null;
+
                 this.init();
             }
 
@@ -463,6 +468,8 @@
                 this.setupRenderer();
                 this.setupLights();
                 this.setupEnvironment();
+                this.setupScrollingEnvironment();
+                this.setupParticles();
                 await this.loadAssets();
                 this.createPlayer();
                 this.setupControls();
@@ -557,6 +564,103 @@
                     marker.position.set(worldX, -1.9, -25);
                     this.scene.add(marker);
                 }
+            }
+
+            setupScrollingEnvironment() {
+                // === SCROLLING GROUND TILES ===
+                const tileMat = new THREE.MeshStandardMaterial({ color: 0x0d0d1f, roughness: 0.9 });
+                for (let i = 0; i < 3; i++) {
+                    const tile = new THREE.Mesh(new THREE.PlaneGeometry(18, 40), tileMat);
+                    tile.rotation.x = -Math.PI / 2;
+                    tile.position.set(0, -3, 10 - i * 40);
+                    tile.receiveShadow = true;
+                    this.scene.add(tile);
+                    this.groundTiles.push(tile);
+                }
+
+                // === MOVING NEON ROAD STRIPES ===
+                const stripeMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.18 });
+                for (let i = 0; i < 10; i++) {
+                    const stripe = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 5), stripeMat);
+                    stripe.rotation.x = -Math.PI / 2;
+                    stripe.position.set(0, -2.98, -i * 12);
+                    this.scene.add(stripe);
+                    this.roadStripes.push(stripe);
+                }
+
+                // === SIDE BUILDINGS ===
+                const buildingCount = 16;
+                for (let i = 0; i < buildingCount; i++) {
+                    for (const side of [-1, 1]) {
+                        const h = 2 + Math.random() * 7;
+                        const w = 1.0 + Math.random() * 1.8;
+                        const d = 1.0 + Math.random() * 1.5;
+                        const hasGlow = Math.random() > 0.5;
+                        const glowColor = Math.random() > 0.5 ? 0x003311 : 0x000a22;
+                        const mat = new THREE.MeshStandardMaterial({
+                            color: 0x080812,
+                            emissive: hasGlow ? glowColor : 0x000000,
+                            emissiveIntensity: 1.0
+                        });
+                        const building = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+                        building.position.set(
+                            side * (8.5 + Math.random() * 2.5),
+                            -3 + h / 2,
+                            -i * 9 - Math.random() * 7
+                        );
+                        this.scene.add(building);
+                        this.sideBuildings.push(building);
+
+                        // Rooftop accent light on some buildings
+                        if (hasGlow) {
+                            const roofMat = new THREE.MeshBasicMaterial({
+                                color: Math.random() > 0.5 ? 0x00ff88 : 0x0055ff,
+                                transparent: true,
+                                opacity: 0.85
+                            });
+                            const roofLight = new THREE.Mesh(new THREE.BoxGeometry(w + 0.1, 0.08, d + 0.1), roofMat);
+                            roofLight.position.copy(building.position);
+                            roofLight.position.y += h / 2;
+                            this.scene.add(roofLight);
+                            this.sideBuildings.push(roofLight);
+                        }
+                    }
+                }
+            }
+
+            setupParticles() {
+                const count = 150;
+                const positions = new Float32Array(count * 3);
+                const colors = new Float32Array(count * 3);
+
+                for (let i = 0; i < count; i++) {
+                    positions[i * 3]     = (Math.random() - 0.5) * 26;
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * 14 - 1;
+                    positions[i * 3 + 2] = -(Math.random() * 100);
+
+                    // Green-to-cyan color variation
+                    const t = Math.random();
+                    colors[i * 3]     = t * 0.2;
+                    colors[i * 3 + 1] = 0.55 + t * 0.45;
+                    colors[i * 3 + 2] = 0.4 + (1 - t) * 0.6;
+                }
+
+                const geo = new THREE.BufferGeometry();
+                geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geo.setAttribute('color',    new THREE.BufferAttribute(colors, 3));
+
+                const mat = new THREE.PointsMaterial({
+                    size: 0.07,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.75,
+                    sizeAttenuation: true,
+                    depthWrite: false
+                });
+
+                this.particleSystem = new THREE.Points(geo, mat);
+                this.scene.add(this.particleSystem);
+                this.particlePositions = positions;
             }
 
             async loadAssets() {
@@ -790,8 +894,8 @@
                 this.obstacles = [];
 
                 // Reset player position
-                this.playerTargetPos = { x: 1, y: 1 };
-                this.playerGridPos = { x: 1, y: 1 };
+                this.playerTargetPos = { x: 1, y: 0 };
+                this.playerGridPos = { x: 1, y: 0 };
             }
 
             restartGame() {
@@ -823,6 +927,10 @@
                     // Update obstacles
                     this.updateObstacles(deltaTime);
 
+                    // Update scrolling environment and particles
+                    this.updateScrollingEnvironment();
+                    this.updateParticles();
+
                     // Spawn obstacles
                     if (currentTime - this.lastSpawnTime > this.gameState.spawnInterval) {
                         this.createObstacle();
@@ -835,6 +943,43 @@
                         this.gameState.lastDifficultyIncrease = currentTime;
                     }
                 }
+            }
+
+            updateScrollingEnvironment() {
+                if (this.gameState.state !== 'PLAYING') return;
+                const spd = this.gameState.speed;
+
+                for (const tile of this.groundTiles) {
+                    tile.position.z += spd;
+                    if (tile.position.z > 30) tile.position.z -= 120;
+                }
+
+                for (const stripe of this.roadStripes) {
+                    stripe.position.z += spd;
+                    if (stripe.position.z > 6) stripe.position.z -= 120;
+                }
+
+                for (const building of this.sideBuildings) {
+                    building.position.z += spd;
+                    if (building.position.z > 15) building.position.z -= 150;
+                }
+            }
+
+            updateParticles() {
+                if (!this.particleSystem || this.gameState.state !== 'PLAYING') return;
+                const pos = this.particlePositions;
+                const spd = this.gameState.speed * 3;
+
+                for (let i = 0; i < pos.length / 3; i++) {
+                    pos[i * 3 + 2] += spd;
+                    if (pos[i * 3 + 2] > 7) {
+                        pos[i * 3]     = (Math.random() - 0.5) * 26;
+                        pos[i * 3 + 1] = (Math.random() - 0.5) * 14 - 1;
+                        pos[i * 3 + 2] = -100;
+                    }
+                }
+
+                this.particleSystem.geometry.attributes.position.needsUpdate = true;
             }
 
             animate() {
