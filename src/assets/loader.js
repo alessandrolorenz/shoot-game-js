@@ -17,13 +17,15 @@ function loadModel(path) {
 }
 
 export async function loadAssets() {
-    const models = { player: null, enemy: null, tank: null, envModels: [] };
+    const models = { player: null, enemy: null, tank: null, enemyDub: null, enemyAtomicBomb: null, envModels: [] };
 
     try {
-        [models.player, models.enemy, models.tank] = await Promise.all([
+        [models.player, models.enemy, models.tank, models.enemyDub, models.enemyAtomicBomb] = await Promise.all([
             loadModel('/models/player.glb'),
             loadModel('/models/enemy.glb'),
-            loadModel('/models/tank.glb')
+            loadModel('/models/tank.glb'),
+            loadModel('/models/enemy-dub.glb'),
+            loadModel('/models/enemy-atomic-bomb.glb'),
         ]);
 
         const envPaths = [

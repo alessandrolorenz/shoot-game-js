@@ -10,6 +10,7 @@ import { setupGround } from './environment/ground.js';
 import {
     setupScrollingEnvironment,
     setupSideBuildings,
+    setupGroundRocks,
     updateScrollingEnvironment
 } from './environment/scrolling.js';
 import { setupParticles, updateParticles } from './environment/particles.js';
@@ -49,6 +50,7 @@ export class GridRunnerGame {
         this.playerTargetPos = { x: 1, y: 0 };
         this.lastSpawnTime = 0;
         this.models = { player: null, enemy: null, tank: null, envModels: [] };
+        this.groundRocks = [];
         this.clock = new THREE.Clock();
         this.groundTiles = [];
         this.roadStripes = [];
@@ -88,6 +90,7 @@ export class GridRunnerGame {
         this.models = await loadAssets();
 
         this.sideBuildings = setupSideBuildings(this.scene, this.models);
+        this.groundRocks = setupGroundRocks(this.scene);
         this.player = createPlayer(this.scene, this.models);
         updatePlayerPosition(this.player, this.playerGridPos, this.playerTargetPos);
 
@@ -311,7 +314,8 @@ export class GridRunnerGame {
 
             updateScrollingEnvironment(
                 this.groundTiles, this.roadStripes,
-                this.sideBuildings, this.gameState.speed
+                this.sideBuildings, this.gameState.speed,
+                this.groundRocks
             );
             updateParticles(this.particlePositions, this.particleSystem, this.gameState.speed);
 

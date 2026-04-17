@@ -60,13 +60,15 @@ export function updateBullets(bullets, obstacles, scene, onEnemyDestroyed) {
             const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
             if (dist < hitRadius) {
-                obs.userData.health--;
                 hit = true;
 
-                if (obs.userData.health <= 0) {
-                    scene.remove(obs);
-                    obstacles.splice(oi, 1);
-                    onEnemyDestroyed();
+                if (!obs.userData.bulletProof) {
+                    obs.userData.health--;
+                    if (obs.userData.health <= 0) {
+                        scene.remove(obs);
+                        obstacles.splice(oi, 1);
+                        onEnemyDestroyed();
+                    }
                 }
                 break;
             }

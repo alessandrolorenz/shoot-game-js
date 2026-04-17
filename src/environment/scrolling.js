@@ -95,7 +95,32 @@ export function setupSideBuildings(scene, models) {
     return sideBuildings;
 }
 
-export function updateScrollingEnvironment(groundTiles, roadStripes, sideBuildings, speed) {
+export function setupGroundRocks(scene) {
+    const count = 40;
+    const geo = new THREE.IcosahedronGeometry(0.55, 0); // flat-shaded low-poly = rock look
+    const mat = new THREE.MeshStandardMaterial({ color: 0x4a4f5a, roughness: 1.0, flatShading: true });
+    const mesh = new THREE.InstancedMesh(geo, mat, count);
+    mesh.castShadow = false;
+    mesh.receiveShadow = false;
+
+    const dummy = new THREE.Object3D();
+    for (let i = 0; i < count; i++) {
+        dummy.position.set(
+            (Math.random() - 0.5) * 16,
+            -3 + Math.random() * 0.15,
+            -Math.random() * 120
+        );
+        dummy.scale.setScalar(0.4 + Math.random() * 0.7);
+        dummy.rotation.y = Math.random() * Math.PI * 2;
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+    scene.add(mesh);
+    return mesh;
+}
+
+export function updateScrollingEnvironment(groundTiles, roadStripes, sideBuildings, speed, groundRocks) {
     for (const tile of groundTiles) {
         tile.position.z += speed;
         if (tile.position.z > 30) tile.position.z -= 120;
@@ -109,5 +134,16 @@ export function updateScrollingEnvironment(groundTiles, roadStripes, sideBuildin
     for (const building of sideBuildings) {
         building.position.z += speed;
         if (building.position.z > 15) building.position.z -= 295;
+    }
+
+    if (groundRocks) {
+        const m = new THREE.Matrix4();
+        for (let i = 0; i < groundRocks.count; i++) {
+            groundRocks.getMatrixAt(i, m);
+            m.elements[14] += speed;          // poke Z translation directly
+            if (m.elements[14] > 15) m.elements[14] -= 120;
+            groundRocks.setMatrixAt(i, m);
+        }
+        groundRocks.instanceMatrix.needsUpdate = true;
     }
 }
