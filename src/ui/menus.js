@@ -24,4 +24,5 @@ export function hideGameOverScreen() {
 
 export function resetBombUI() {
     document.getElementById('bomb-indicator').classList.add('hidden');
+    document.getElementById('btn-bomb').classList.remove('visible');
 }

@@ -360,6 +360,35 @@ body {
 
 #bomb-indicator.hidden { display: none; }
 
+/* ===== BOMB BUTTON ===== */
+#btn-bomb {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 100, 0, 0.4);
+    border: 2px solid rgba(255, 160, 0, 0.9);
+    border-radius: 50%;
+    font-size: 28px;
+    color: #fff;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+    box-shadow: 0 0 16px rgba(255, 120, 0, 0.7);
+    animation: bombPulse 0.75s infinite;
+    z-index: 10;
+}
+
+#btn-bomb.visible { display: flex; }
+
+@keyframes bombPulse {
+    0%, 100% { transform: scale(1);    box-shadow: 0 0 16px rgba(255,120,0,0.7); }
+    50%       { transform: scale(1.12); box-shadow: 0 0 30px rgba(255,200,0,1);   }
+}
+
 /* ===== LEVEL TRANSITION BANNER ===== */
 #level-banner {
     position: absolute;

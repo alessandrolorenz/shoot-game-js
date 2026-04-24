@@ -128,6 +128,12 @@ export class GridRunnerGame {
         document.getElementById('btn-start').addEventListener('click', () => this.startGame());
         document.getElementById('restart-btn').addEventListener('click', () => this.restartGame());
         document.getElementById('btn-back-menu').addEventListener('click', () => this.goToMenu());
+
+        document.getElementById('btn-bomb').addEventListener('click', () => this._activateBomb());
+        document.getElementById('btn-bomb').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this._activateBomb();
+        });
     }
 
     // ── Bomb helper (passes kill callback so level manager counts bomb kills) ─
