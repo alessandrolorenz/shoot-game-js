@@ -22,15 +22,7 @@ export function hideGameOverScreen() {
     document.getElementById('game-over-screen').classList.remove('visible');
 }
 
-export function showShootButton(visible) {
-    const btn = document.getElementById('btn-shoot');
-    if (visible) {
-        btn.classList.remove('hidden');
-    } else {
-        btn.classList.add('hidden');
-    }
-}
-
 export function resetBombUI() {
+    document.getElementById('bomb-indicator').classList.add('hidden');
     document.getElementById('btn-bomb').classList.remove('visible');
 }

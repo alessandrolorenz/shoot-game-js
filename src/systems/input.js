@@ -36,9 +36,6 @@ export function setupKeyboard(callbacks) {
                 case 'S':
                     movePlayer('down');
                     break;
-                case ' ':
-                    manualShoot();
-                    break;
                 case 'b':
                 case 'B':
                     activateBomb();
@@ -48,19 +45,37 @@ export function setupKeyboard(callbacks) {
     });
 }
 
-export function setupMobileControls(callbacks) {
-    const { movePlayer } = callbacks;
+export function setupSwipeControls(callbacks) {
+    const { movePlayer, getState } = callbacks;
 
-    document.getElementById('btn-left').addEventListener('click', () => movePlayer('left'));
-    document.getElementById('btn-right').addEventListener('click', () => movePlayer('right'));
-    document.getElementById('btn-up').addEventListener('click', () => movePlayer('up'));
-    document.getElementById('btn-down').addEventListener('click', () => movePlayer('down'));
+    let startX = null;
+    let startY = null;
+    const THRESHOLD = 30;
 
-    ['btn-left', 'btn-right', 'btn-up', 'btn-down'].forEach(id => {
-        const btn = document.getElementById(id);
-        btn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            btn.click();
-        });
-    });
+    const isUIElement = (el) =>
+        !!el.closest('button, a, #mobile-controls, #action-btns, #start-screen, #game-over-screen, #loading');
+
+    document.addEventListener('touchstart', (e) => {
+        if (isUIElement(e.target)) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+        if (startX === null) return;
+        if (getState() !== 'PLAYING') { startX = null; startY = null; return; }
+
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        startX = null;
+        startY = null;
+
+        if (Math.abs(dx) < THRESHOLD && Math.abs(dy) < THRESHOLD) return;
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+            movePlayer(dx > 0 ? 'right' : 'left');
+        } else {
+            movePlayer(dy > 0 ? 'down' : 'up');
+        }
+    }, { passive: true });
 }
