@@ -42,13 +42,13 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
         obstacle = models.enemyDub.clone();
         obstacle.rotation.x = 160;
         obstacle.rotation.y = Math.PI * 2;
-        baseScale = 4.5 + Math.random() * 0.5;
+        baseScale = 1.5 + Math.random() * 0.5;
         obstacle.scale.set(baseScale, baseScale, baseScale);
     } else if (models.enemy) {
         obstacle = models.enemy.clone();
         obstacle.rotation.x = 160;
         obstacle.rotation.y = Math.PI / -2;
-        baseScale = 4.5 + Math.random() * 0.5;
+        baseScale = 1.5 + Math.random() * 0.5;
         obstacle.scale.set(baseScale, baseScale, baseScale);
     } else {
         const geometry = new THREE.BoxGeometry(7, 7, 7);

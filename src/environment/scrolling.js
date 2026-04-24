@@ -8,7 +8,7 @@ export function setupScrollingEnvironment(scene) {
     for (let i = 0; i < 3; i++) {
         const tile = new THREE.Mesh(new THREE.PlaneGeometry(18, 40), tileMat);
         tile.rotation.x = -Math.PI / 2;
-        tile.position.set(0, -3, 10 - i * 40);
+        tile.position.set(0, -3.5, 10 - i * 40);
         tile.receiveShadow = true;
         scene.add(tile);
         groundTiles.push(tile);
@@ -22,7 +22,7 @@ export function setupScrollingEnvironment(scene) {
     for (let i = 0; i < 10; i++) {
         const stripe = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 5), stripeMat);
         stripe.rotation.x = -Math.PI / 2;
-        stripe.position.set(0, -2.98, -i * 12);
+        stripe.position.set(0, -3.48, -i * 12);
         scene.add(stripe);
         roadStripes.push(stripe);
     }
@@ -107,7 +107,7 @@ export function setupGroundRocks(scene) {
     for (let i = 0; i < count; i++) {
         dummy.position.set(
             (Math.random() - 0.5) * 16,
-            -3 + Math.random() * 0.15,
+            -3.45 + Math.random() * 0.15,
             -Math.random() * 120
         );
         dummy.scale.setScalar(0.4 + Math.random() * 0.7);

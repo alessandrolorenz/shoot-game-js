@@ -1,4 +1,4 @@
-# 🎮 3D Grid Runner Game
+# 🎮 Grid Airplane Game
 
 A complete, playable 3D endless runner game built with Three.js and vanilla JavaScript.
 

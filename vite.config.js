@@ -58,9 +58,9 @@ export default defineConfig({
       },
 
       manifest: {
-        name: '3D Grid Runner',
-        short_name: 'Grid Runner',
-        description: '3D Grid Runner — Endless runner with depth-based obstacles',
+        name: 'Grid Airplane Game',
+        short_name: 'Grid Airplane',
+        description: 'Grid Airplane Game — Endless runner with depth-based obstacles',
         theme_color: '#000000',
         background_color: '#000000',
         // fullscreen removes all browser chrome — ideal for a game.
