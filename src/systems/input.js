@@ -36,32 +36,12 @@ export function setupKeyboard(callbacks) {
                 case 'S':
                     movePlayer('down');
                     break;
-                case ' ':
-                    manualShoot();
-                    break;
                 case 'b':
                 case 'B':
                     activateBomb();
                     break;
             }
         }
-    });
-}
-
-export function setupMobileControls(callbacks) {
-    const { movePlayer } = callbacks;
-
-    document.getElementById('btn-left').addEventListener('click', () => movePlayer('left'));
-    document.getElementById('btn-right').addEventListener('click', () => movePlayer('right'));
-    document.getElementById('btn-up').addEventListener('click', () => movePlayer('up'));
-    document.getElementById('btn-down').addEventListener('click', () => movePlayer('down'));
-
-    ['btn-left', 'btn-right', 'btn-up', 'btn-down'].forEach(id => {
-        const btn = document.getElementById(id);
-        btn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            btn.click();
-        });
     });
 }
 

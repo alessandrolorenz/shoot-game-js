@@ -37,23 +37,19 @@
                     <h3>How to Play</h3>
                     <div class="loading-instructions">
                         <div class="instruction-card" style="--delay:0.1s">
-                            <div class="instr-keys">↑ ↓ ← →</div>
+                            <div class="instr-keys">↑↓←→ / Swipe</div>
                             <div class="instr-label">Move Aircraft</div>
                         </div>
                         <div class="instruction-card" style="--delay:0.25s">
-                            <div class="instr-keys">WASD</div>
-                            <div class="instr-label">Also Move</div>
+                            <div class="instr-keys">Auto 🔫</div>
+                            <div class="instr-label">Shooting</div>
                         </div>
                         <div class="instruction-card" style="--delay:0.4s">
-                            <div class="instr-keys">Space</div>
-                            <div class="instr-label">Shoot (Manual)</div>
-                        </div>
-                        <div class="instruction-card" style="--delay:0.55s">
                             <div class="instr-keys">B</div>
-                            <div class="instr-label">Bomb (5 kills)</div>
+                            <div class="instr-label">Bomb (10 kills)</div>
                         </div>
                     </div>
-                    <p class="loading-tip">Destroy enemies to earn kills — 5 kills unlocks the bomb!</p>
+                    <p class="loading-tip">Swipe or use arrow keys to move — 10 kills unlocks the bomb!</p>
                 </div>
                 <div class="loading-footer">
                     <div class="loading-bar-track">
@@ -70,6 +66,7 @@
             <div id="score">0</div>
             <div id="high-score">High Score: 0</div>
             <div id="kills-display" style="font-size:15px;color:#ff8844;margin-top:4px;">Kills: 0/0</div>
+            <div id="bomb-indicator" class="hidden">💣 BOMB READY</div>
             <div id="level-display">LVL 1</div>
         </div>
 
@@ -86,22 +83,23 @@
         <div id="start-screen">
             <h1>🎮 3D GRID RUNNER</h1>
             <p>Dodge obstacles coming from the front!</p>
-            <p>Survive as long as you can</p>
             <div class="controls-info">
-                <h3>Controls</h3>
+                <h3>How to Play</h3>
                 <div class="control-row">
                     <span>Move:</span>
-                    <span>Arrow Keys / WASD</span>
+                    <span>Arrow Keys / WASD / Swipe</span>
                 </div>
                 <div class="control-row">
-                    <span>Pause:</span>
-                    <span>Space / P</span>
+                    <span>Shooting:</span>
+                    <span>Automatic</span>
+                </div>
+                <div class="control-row">
+                    <span>Bomb (10 kills):</span>
+                    <span>B key</span>
                 </div>
             </div>
-            <p style="margin-top:24px;color:#aaa;font-size:15px;">Choose your shooting mode:</p>
             <div class="mode-buttons">
-                <button class="btn mode-btn" id="btn-auto-shoot">🤖 Auto Shoot</button>
-                <button class="btn mode-btn secondary" id="btn-manual-shoot">🎯 Manual Shoot</button>
+                <button class="btn mode-btn" id="btn-start">▶ PLAY</button>
             </div>
         </div>
 
@@ -113,19 +111,6 @@
             <button class="btn" id="restart-btn">PLAY AGAIN</button>
         </div>
 
-        <!-- Mobile Controls -->
-        <div id="mobile-controls">
-            <button class="control-btn" id="btn-up">⬆️</button>
-            <button class="control-btn" id="btn-left">⬅️</button>
-            <button class="control-btn" id="btn-down">⬇️</button>
-            <button class="control-btn" id="btn-right">➡️</button>
-        </div>
-
-        <!-- Action Buttons (shoot + bomb) -->
-        <div id="action-btns">
-            <button id="btn-bomb">💣</button>
-            <button id="btn-shoot">🔫</button>
-        </div>
     </div>
 
     <script type="module" src="/src/main.js"></script>

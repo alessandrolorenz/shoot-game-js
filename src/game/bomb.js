@@ -13,7 +13,7 @@ export function onEnemyDestroyed(gameState, destroyedCountRef, bombReadyRef) {
 
     if (destroyedCountRef.value % 10 === 0 && !bombReadyRef.value) {
         bombReadyRef.value = true;
-        document.getElementById('btn-bomb').classList.add('visible');
+        document.getElementById('bomb-indicator').classList.remove('hidden');
     }
 }
 
@@ -45,5 +45,5 @@ export function activateBomb(obstacles, scene, gameState, bombReadyRef, playerTa
     }
 
     bombReadyRef.value = false;
-    document.getElementById('btn-bomb').classList.remove('visible');
+    document.getElementById('bomb-indicator').classList.add('hidden');
 }

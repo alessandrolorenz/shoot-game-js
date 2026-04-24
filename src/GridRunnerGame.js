@@ -23,7 +23,7 @@ import {
 } from './game/bullets.js';
 import { onEnemyDestroyed, activateBomb as activateBombFn } from './game/bomb.js';
 import { createBoss, updateBoss, updateBossBullets } from './game/boss.js';
-import { setupKeyboard, setupMobileControls, setupSwipeControls } from './systems/input.js';
+import { setupKeyboard, setupSwipeControls } from './systems/input.js';
 import { shouldSpawn } from './systems/spawn.js';
 import { LevelManager } from './systems/levelManager.js';
 import {
@@ -33,7 +33,6 @@ import {
     showStartScreen,
     showBackMenuButton,
     hideBackMenuButton,
-    showShootButton,
     resetBombUI
 } from './ui/menus.js';
 import { showLevelBanner, showVictoryBanner, updateLevelHUD } from './ui/levelUI.js';
@@ -119,10 +118,6 @@ export class GridRunnerGame {
             restartGame: () => this.restartGame()
         });
 
-        setupMobileControls({
-            movePlayer: (dir) => movePlayer(dir, this.playerTargetPos, this.gameState)
-        });
-
         setupSwipeControls({
             movePlayer: (dir) => movePlayer(dir, this.playerTargetPos, this.gameState),
             getState: () => this.gameState.state,
@@ -130,36 +125,9 @@ export class GridRunnerGame {
     }
 
     setupUI() {
-        document.getElementById('btn-auto-shoot').addEventListener('click', () => {
-            this.shootMode = 'auto';
-            this.startGame();
-        });
-        document.getElementById('btn-manual-shoot').addEventListener('click', () => {
-            this.shootMode = 'manual';
-            this.startGame();
-        });
+        document.getElementById('btn-start').addEventListener('click', () => this.startGame());
         document.getElementById('restart-btn').addEventListener('click', () => this.restartGame());
         document.getElementById('btn-back-menu').addEventListener('click', () => this.goToMenu());
-
-        document.getElementById('btn-shoot').addEventListener('click', () => {
-            this.lastShootTime = manualShootFn(
-                this.scene, this.bullets, this.player,
-                this.gameState, this.shootMode, this.lastShootTime
-            );
-        });
-        document.getElementById('btn-shoot').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            this.lastShootTime = manualShootFn(
-                this.scene, this.bullets, this.player,
-                this.gameState, this.shootMode, this.lastShootTime
-            );
-        });
-
-        document.getElementById('btn-bomb').addEventListener('click', () => this._activateBomb());
-        document.getElementById('btn-bomb').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            this._activateBomb();
-        });
     }
 
     // ── Bomb helper (passes kill callback so level manager counts bomb kills) ─
@@ -198,8 +166,6 @@ export class GridRunnerGame {
 
         this.playerTargetPos = { x: 1, y: 0 };
         this.playerGridPos   = { x: 1, y: 0 };
-
-        showShootButton(this.shootMode === 'manual');
 
         // Initialise level system and hold spawning until the banner clears
         this.levelManager.reset();
