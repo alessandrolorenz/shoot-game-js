@@ -23,7 +23,7 @@ import {
 } from './game/bullets.js';
 import { onEnemyDestroyed, activateBomb as activateBombFn } from './game/bomb.js';
 import { createBoss, updateBoss, updateBossBullets } from './game/boss.js';
-import { setupKeyboard, setupMobileControls } from './systems/input.js';
+import { setupKeyboard, setupMobileControls, setupSwipeControls } from './systems/input.js';
 import { shouldSpawn } from './systems/spawn.js';
 import { LevelManager } from './systems/levelManager.js';
 import {
@@ -121,6 +121,11 @@ export class GridRunnerGame {
 
         setupMobileControls({
             movePlayer: (dir) => movePlayer(dir, this.playerTargetPos, this.gameState)
+        });
+
+        setupSwipeControls({
+            movePlayer: (dir) => movePlayer(dir, this.playerTargetPos, this.gameState),
+            getState: () => this.gameState.state,
         });
     }
 

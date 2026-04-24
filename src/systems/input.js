@@ -64,3 +64,38 @@ export function setupMobileControls(callbacks) {
         });
     });
 }
+
+export function setupSwipeControls(callbacks) {
+    const { movePlayer, getState } = callbacks;
+
+    let startX = null;
+    let startY = null;
+    const THRESHOLD = 30;
+
+    const isUIElement = (el) =>
+        !!el.closest('button, a, #mobile-controls, #action-btns, #start-screen, #game-over-screen, #loading');
+
+    document.addEventListener('touchstart', (e) => {
+        if (isUIElement(e.target)) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+        if (startX === null) return;
+        if (getState() !== 'PLAYING') { startX = null; startY = null; return; }
+
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        startX = null;
+        startY = null;
+
+        if (Math.abs(dx) < THRESHOLD && Math.abs(dy) < THRESHOLD) return;
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+            movePlayer(dx > 0 ? 'right' : 'left');
+        } else {
+            movePlayer(dy > 0 ? 'down' : 'up');
+        }
+    }, { passive: true });
+}
