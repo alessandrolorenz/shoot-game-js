@@ -1,6 +1,40 @@
 import * as THREE from 'three';
 import { CONFIG } from '../config.js';
 
+export function spawnDestroyEffect(scene, position) {
+    const count = 6;
+    const geo = new THREE.BoxGeometry(0.4, 0.4, 0.4);
+    const mat = new THREE.MeshBasicMaterial({ color: 0xff6600, transparent: true });
+    const particles = [];
+
+    for (let i = 0; i < count; i++) {
+        const p = new THREE.Mesh(geo, mat.clone());
+        p.position.copy(position);
+        p.userData.vel = new THREE.Vector3(
+            (Math.random() - 0.5) * 0.3,
+            (Math.random() - 0.5) * 0.3,
+            (Math.random() - 0.5) * 0.3
+        );
+        p.userData.life = 1.0;
+        scene.add(p);
+        particles.push(p);
+    }
+
+    function tick() {
+        let alive = false;
+        for (const p of particles) {
+            if (p.userData.life <= 0) continue;
+            p.position.add(p.userData.vel);
+            p.userData.life -= 0.06;
+            p.material.opacity = Math.max(0, p.userData.life);
+            if (p.userData.life > 0) alive = true;
+            else scene.remove(p);
+        }
+        if (alive) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
 export function createBullet(scene, bullets, player) {
     const geometry = new THREE.SphereGeometry(CONFIG.BULLETS.SIZE, 6, 6);
     const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
@@ -65,6 +99,7 @@ export function updateBullets(bullets, obstacles, scene, onEnemyDestroyed) {
                 if (!obs.userData.bulletProof) {
                     obs.userData.health--;
                     if (obs.userData.health <= 0) {
+                        spawnDestroyEffect(scene, obs.position.clone());
                         scene.remove(obs);
                         obstacles.splice(oi, 1);
                         onEnemyDestroyed();

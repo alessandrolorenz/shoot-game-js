@@ -1,3 +1,5 @@
+import { spawnDestroyEffect } from './bullets.js';
+
 /**
  * Called for every enemy destroyed (bullet hit or bomb).
  * Tracks kills for the bomb-ready threshold and updates the score.
@@ -35,6 +37,7 @@ export function activateBomb(obstacles, scene, gameState, bombReadyRef, playerTa
     for (let i = obstacles.length - 1; i >= 0; i--) {
         const obs = obstacles[i];
         if (obs.userData.gridX === gridX && obs.userData.gridY === gridY) {
+            spawnDestroyEffect(scene, obs.position.clone());
             scene.remove(obs);
             obstacles.splice(i, 1);
             if (onKill) onKill();
