@@ -39,6 +39,7 @@ export class LevelManager {
         this.killedCount  = 0;
         this.missedCount  = 0;   // enemies that flew past the player
         this.isTransitioning = false;
+        this.levelResults = [];  // 'perfect' | 'good' | 'ok' per completed level
     }
 
     /** 1-based current level number */
@@ -53,6 +54,7 @@ export class LevelManager {
     /** Full reset to level 1 (called on new game) */
     reset() {
         this.currentLevelIndex = 0;
+        this.levelResults = [];
         this.startLevel();
     }
 
@@ -90,6 +92,29 @@ export class LevelManager {
         if (this.isTransitioning) return false;
         return this.spawnedCount >= this.config.totalEnemies &&
                this.clearedCount >= this.config.totalEnemies;
+    }
+
+    /** Record the result of the just-finished level (call before advanceLevel). */
+    recordLevelResult(killedCount, totalEnemies) {
+        if (killedCount === totalEnemies)        this.levelResults.push('perfect');
+        else if (killedCount > totalEnemies / 2) this.levelResults.push('good');
+        else                                     this.levelResults.push('ok');
+    }
+
+    /**
+     * Compute overall badge from all recorded level results.
+     * 'impossible' if majority of levels were perfect.
+     * 'yeah'       if majority were good-or-better.
+     * 'ok'         otherwise.
+     */
+    getBadge() {
+        const total = this.levelResults.length;
+        if (total === 0) return 'ok';
+        const perfect      = this.levelResults.filter(r => r === 'perfect').length;
+        const goodOrBetter = this.levelResults.filter(r => r !== 'ok').length;
+        if (perfect === total)    return 'impossible';
+        if (perfect > total / 2)  return 'incredible';
+        return 'ok';
     }
 
     hasNextLevel() {

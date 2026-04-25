@@ -111,6 +111,30 @@
             <button class="btn" id="restart-btn">PLAY AGAIN</button>
         </div>
 
+        <!-- Results Screen (shown after game over or victory) -->
+        <div id="results-screen">
+            <h2 id="results-title">GAME OVER</h2>
+            <div id="results-badge">
+                <div id="results-badge-label">OK...</div>
+                <div id="results-badge-sub">Keep practicing!</div>
+            </div>
+            <div id="results-stats">
+                <div class="results-stat">
+                    <span class="stat-label">Enemies Killed</span>
+                    <span id="results-enemies" class="stat-value">0</span>
+                </div>
+                <div class="results-stat">
+                    <span class="stat-label">Score</span>
+                    <span id="results-score" class="stat-value">0</span>
+                </div>
+            </div>
+            <div id="results-new-high" class="hidden">🏆 NEW HIGH SCORE! 🏆</div>
+            <div class="results-buttons">
+                <button class="btn" id="results-play-again">PLAY AGAIN</button>
+                <button class="btn btn-secondary" id="results-menu">MENU</button>
+            </div>
+        </div>
+
         <!-- Bomb Button (mobile) -->
         <button id="btn-bomb">💣</button>
 
