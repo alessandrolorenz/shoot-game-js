@@ -6,6 +6,7 @@ let hideTimer = null;
 
 export function showTutorial() {
     const overlay = document.getElementById('tutorial-overlay');
+    if (!overlay) return;
     overlay.classList.remove('hidden', 'tut-fadeout');
 
     clearTimeout(fadeTimer);
@@ -25,6 +26,7 @@ export function hideTutorial() {
     clearTimeout(fadeTimer);
     clearTimeout(hideTimer);
     const overlay = document.getElementById('tutorial-overlay');
+    if (!overlay) return;
     overlay.classList.add('hidden');
     overlay.classList.remove('tut-fadeout');
 }

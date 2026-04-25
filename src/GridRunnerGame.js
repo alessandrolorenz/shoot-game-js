@@ -183,6 +183,16 @@ export class GridRunnerGame {
         showLevelBanner(1, false, () => {
             if (this.gameState.state === 'PLAYING') this._applyLevelConfig();
         });
+
+        // Fallback: if banner callback timing is interrupted, still show tutorial.
+        setTimeout(() => {
+            if (this.gameState.state === 'PLAYING' && this.levelManager.currentLevel === 1) {
+                const overlay = document.getElementById('tutorial-overlay');
+                if (overlay && overlay.classList.contains('hidden')) {
+                    showTutorial();
+                }
+            }
+        }, 2300);
     }
 
     restartGame() {
