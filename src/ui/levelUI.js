@@ -9,6 +9,12 @@
 
 let bannerTimer = null;
 
+function _getResultText(killedCount, totalEnemies) {
+    if (killedCount === totalEnemies) return { msg: 'Awesome! Impossible!!!', cls: 'result-perfect' };
+    if (killedCount > totalEnemies / 2)  return { msg: 'Good!!',             cls: 'result-good'    };
+    return                                       { msg: 'Pretty ok!!',        cls: 'result-ok'      };
+}
+
 const SUBTITLES = {
     1: 'Engage!',
     2: 'Faster now…',
@@ -52,6 +58,33 @@ export function showLevelBanner(levelNumber, isBoss, onComplete) {
         banner.classList.remove('visible', 'boss');
         if (onComplete) onComplete();
     }, 2000);
+}
+
+/**
+ * Show a level-result banner (performance feedback) for 1.8 s, then call onComplete.
+ * @param {number}   killedCount  enemies destroyed this level
+ * @param {number}   totalEnemies total enemies this level
+ * @param {number}   levelNumber  the level that just ended
+ * @param {Function} onComplete
+ */
+export function showLevelResultBanner(killedCount, totalEnemies, levelNumber, onComplete) {
+    const banner = document.getElementById('level-banner');
+    const title  = document.getElementById('level-banner-title');
+    const sub    = document.getElementById('level-banner-sub');
+
+    banner.classList.remove('visible', 'boss', 'victory', 'result', 'result-perfect', 'result-good', 'result-ok');
+    void banner.offsetWidth;
+
+    const { msg, cls } = _getResultText(killedCount, totalEnemies);
+    title.textContent = `LEVEL ${levelNumber} CLEAR!`;
+    sub.textContent   = msg;
+    banner.classList.add('visible', 'result', cls);
+
+    clearTimeout(bannerTimer);
+    bannerTimer = setTimeout(() => {
+        banner.classList.remove('visible', 'result', 'result-perfect', 'result-good', 'result-ok');
+        if (onComplete) onComplete();
+    }, 1800);
 }
 
 /**

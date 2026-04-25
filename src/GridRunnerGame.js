@@ -33,9 +33,11 @@ import {
     showStartScreen,
     showBackMenuButton,
     hideBackMenuButton,
-    resetBombUI
+    resetBombUI,
+    showResultsScreen,
+    hideResultsScreen,
 } from './ui/menus.js';
-import { showLevelBanner, showVictoryBanner, updateLevelHUD } from './ui/levelUI.js';
+import { showLevelBanner, showLevelResultBanner, showVictoryBanner, updateLevelHUD } from './ui/levelUI.js';
 
 export class GridRunnerGame {
     constructor() {
@@ -61,6 +63,7 @@ export class GridRunnerGame {
         this.shootMode = 'auto';
         this.destroyedCount = { value: 0 };
         this.bombReady = { value: false };
+        this.totalGameKills = 0;
 
         // ── Level system ───────────────────────────────────────────────────
         this.levelManager = new LevelManager();
@@ -92,6 +95,11 @@ export class GridRunnerGame {
         this.groundRocks = setupGroundRocks(this.scene);
         this.player = createPlayer(this.scene, this.models);
         updatePlayerPosition(this.player, this.playerGridPos, this.playerTargetPos);
+
+        // Intercept game-over to show results screen instead of the old overlay
+        this.gameState.showGameOver = (finalScore, isNewHighScore) => {
+            this._showResults(finalScore, isNewHighScore, false);
+        };
 
         this.setupControls();
         this.setupUI();
@@ -128,6 +136,8 @@ export class GridRunnerGame {
         document.getElementById('btn-start').addEventListener('click', () => this.startGame());
         document.getElementById('restart-btn').addEventListener('click', () => this.restartGame());
         document.getElementById('btn-back-menu').addEventListener('click', () => this.goToMenu());
+        document.getElementById('results-play-again').addEventListener('click', () => this.restartGame());
+        document.getElementById('results-menu').addEventListener('click', () => this.goToMenu());
 
         document.getElementById('btn-bomb').addEventListener('click', () => this._activateBomb());
         document.getElementById('btn-bomb').addEventListener('touchstart', (e) => {
@@ -151,6 +161,7 @@ export class GridRunnerGame {
     goToMenu() {
         this._clearScene();
         hideGameOverScreen();
+        hideResultsScreen();
         hideBackMenuButton();
         showStartScreen();
         this.gameState.setState('MENU');
@@ -168,6 +179,7 @@ export class GridRunnerGame {
         this.lastShootTime = 0;
         this.destroyedCount.value = 0;
         this.bombReady.value = false;
+        this.totalGameKills = 0;
         resetBombUI();
 
         this.playerTargetPos = { x: 1, y: 0 };
@@ -184,6 +196,7 @@ export class GridRunnerGame {
 
     restartGame() {
         hideGameOverScreen();
+        hideResultsScreen();
         hideBackMenuButton();
         this.startGame();
     }
@@ -216,19 +229,46 @@ export class GridRunnerGame {
         this.levelManager.beginTransition();
         this._clearScene();
 
+        const killedCount  = this.levelManager.killedCount;
+        const totalEnemies = this.levelManager.config.totalEnemies;
+        const levelNumber  = this.levelManager.currentLevel;
+
+        this.levelManager.recordLevelResult(killedCount, totalEnemies);
+
         if (!this.levelManager.hasNextLevel()) {
-            // All 9 levels cleared — victory!
-            showVictoryBanner(() => {
-                if (this.gameState.state === 'PLAYING') this.goToMenu();
+            showLevelResultBanner(killedCount, totalEnemies, levelNumber, () => {
+                if (this.gameState.state === 'PLAYING') {
+                    this.gameState.setState('GAMEOVER');
+                    const finalScore = Math.floor(this.gameState.score);
+                    const isNew = finalScore > this.gameState.highScore;
+                    if (isNew) {
+                        this.gameState.highScore = finalScore;
+                        localStorage.setItem('highScore', this.gameState.highScore.toString());
+                    }
+                    this._showResults(finalScore, isNew, true);
+                }
             });
             return;
         }
 
-        this.levelManager.advanceLevel();
-        const cfg = this.levelManager.config;
+        showLevelResultBanner(killedCount, totalEnemies, levelNumber, () => {
+            if (this.gameState.state !== 'PLAYING') return;
+            this.levelManager.advanceLevel();
+            const cfg = this.levelManager.config;
+            showLevelBanner(this.levelManager.currentLevel, cfg.isBoss, () => {
+                if (this.gameState.state === 'PLAYING') this._applyLevelConfig();
+            });
+        });
+    }
 
-        showLevelBanner(this.levelManager.currentLevel, cfg.isBoss, () => {
-            if (this.gameState.state === 'PLAYING') this._applyLevelConfig();
+    /** Show the end-of-run results screen. */
+    _showResults(finalScore, isNewHighScore, isVictory) {
+        showResultsScreen({
+            finalScore,
+            isNewHighScore,
+            isVictory,
+            totalKills: this.totalGameKills,
+            badge: this.levelManager.getBadge(),
         });
     }
 
@@ -238,6 +278,7 @@ export class GridRunnerGame {
     _onEnemyKilled() {
         onEnemyDestroyed(this.gameState, this.destroyedCount, this.bombReady);
         this.levelManager.recordKill();
+        this.totalGameKills++;
         updateLevelHUD(
             this.levelManager.currentLevel,
             this.levelManager.killedCount,
