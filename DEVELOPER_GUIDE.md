@@ -1,4 +1,4 @@
-# 3D Grid Runner — Developer Guide
+# Grid Airplane Game — Developer Guide
 
 A comprehensive reference for understanding, maintaining, and extending this codebase.
 
