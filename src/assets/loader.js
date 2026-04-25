@@ -70,7 +70,7 @@ export async function loadAssets() {
         [models.player, models.enemy, models.tank, models.enemyDub, models.enemyAtomicBomb, models.boss] = await Promise.all([
             loadModel('/models/player.glb'),
             loadModel('/models/enemy.glb'),
-            loadModel('/models/tank.glb'),
+            loadModel('/models/ground-garbage.glb'),
             loadModel('/models/enemy-dub.glb'),
             loadModel('/models/enemy-atomic-bomb.glb'),
             loadModel('/models/boss.glb'),
@@ -89,6 +89,25 @@ export async function loadAssets() {
             '/models/environment-models/tree/',
             0.2
         );
+
+        if (treeModel) {
+            treeModel.traverse((child) => {
+                if (!child.isMesh) return;
+                const mats = Array.isArray(child.material) ? child.material : [child.material];
+                for (const mat of mats) {
+                    // The MTL declares Kd 0 0 0 (black diffuse) which multiplies
+                    // the texture to black. Fix: set colour to white so the texture
+                    // renders at full brightness, then add a small emissive lift.
+                    if (mat.map && mat.color) {
+                        mat.color.setRGB(1, 1, 1);
+                    }
+                    if ('emissive' in mat && mat.map) {
+                        mat.emissiveMap = mat.map;
+                        mat.emissiveIntensity = 0.1;
+                    }
+                }
+            });
+        }
 
         models.envModels = treeModel ? [treeModel, treeModel, treeModel, treeModel, ...glbModels] : glbModels;
         console.log('Models loaded:', models);

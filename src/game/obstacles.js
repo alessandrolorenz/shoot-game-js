@@ -23,6 +23,25 @@ function applyEmissive(root, color, intensity) {
     });
 }
 
+function createLightningBolt() {
+    const points = [];
+    const segs = 5;
+    const length = 1.2;
+    for (let i = 0; i <= segs; i++) {
+        const t = i / segs;
+        points.push(new THREE.Vector3(
+            i === 0 || i === segs ? 0 : (Math.random() - 0.5) * 0.5,
+            -t * length,
+            0
+        ));
+    }
+    const geo = new THREE.BufferGeometry().setFromPoints(points);
+    const mat = new THREE.LineBasicMaterial({ color: 0xeeeeff });
+    const bolt = new THREE.Line(geo, mat);
+    bolt.visible = false;
+    return bolt;
+}
+
 export function createObstacle(scene, obstacles, models, gameState, levelConfig) {
     if (obstacles.length >= CONFIG.GAME.MAX_OBSTACLES) return;
 
@@ -31,6 +50,7 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
 
     let obstacle;
     let baseScale;
+    let lightningBolts = null;
 
     // Model selection strictly by row: bottom=tank, middle=enemy, top=enemyDub
     let enemyType;
@@ -55,14 +75,21 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
         obstacle.rotation.y = Math.PI * 2;
         baseScale = 1.5 + Math.random() * 0.5;
         obstacle.scale.set(baseScale, baseScale, baseScale);
-        applyEmissive(obstacle, 0x00aaff, 0.7);
+        applyEmissive(obstacle, 0x003853, 0.7);
+        const b1 = createLightningBolt();
+        b1.position.set(-0.4, -1.0, 0);
+        const b2 = createLightningBolt();
+        b2.position.set(0.4, -1.0, 0);
+        obstacle.add(b1);
+        obstacle.add(b2);
+        lightningBolts = [b1, b2];
     } else if (models.enemy) {
         obstacle = models.enemy.clone();
         obstacle.rotation.x = 160;
         obstacle.rotation.y = Math.PI / -2;
         baseScale = 1.5 + Math.random() * 0.5;
         obstacle.scale.set(baseScale, baseScale, baseScale);
-        applyEmissive(obstacle, 0xff2200, 0.7);
+        applyEmissive(obstacle, 0x00aaff, 0.7);
     } else {
         const geometry = new THREE.BoxGeometry(7, 7, 7);
         const material = new THREE.MeshStandardMaterial({ color: 0xff4444 });
@@ -109,6 +136,9 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
         canMultiDodge,
         // Z threshold at which the first (or next) dodge is triggered
         nextDodgeZ:     CONFIG.ENEMY_DODGE.SWITCH_Z,
+        // Lightning effect for storm cloud (enemyDub)
+        lightningBolts,
+        lightningTimer: 0,
     };
 
     updateObstaclePosition(obstacle);
@@ -197,6 +227,18 @@ export function updateObstacles(obstacles, scene, gameState, playerGridPos, onDe
         }
 
         updateObstaclePosition(obstacle);
+
+        // ── Lightning flicker for storm cloud (enemyDub) ──────────────────
+        if (obstacle.userData.lightningBolts) {
+            if (obstacle.userData.lightningTimer > 0) {
+                obstacle.userData.lightningTimer--;
+            } else if (obstacle.userData.lightningBolts[0].visible) {
+                obstacle.userData.lightningBolts.forEach(b => { b.visible = false; });
+            } else if (Math.random() < 0.03) {
+                obstacle.userData.lightningBolts.forEach(b => { b.visible = true; });
+                obstacle.userData.lightningTimer = 2 + Math.floor(Math.random() * 3);
+            }
+        }
 
         // ── Player collision ──────────────────────────────────────────────
         // Only test while the obstacle is still approaching (z <= 0).
