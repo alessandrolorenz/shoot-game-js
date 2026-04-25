@@ -31,11 +31,15 @@ export function createBoss(scene, obstacles, models, health = 30) {
     let boss;
     let baseScale;
 
-    if (models.enemy) {
+    if (models.boss) {
+        boss = models.boss.clone();
+        baseScale = 4.0;
+        boss.scale.set(baseScale, baseScale, baseScale);
+    } else if (models.enemy) {
         boss = models.enemy.clone();
         boss.rotation.x = 160;
         boss.rotation.y = Math.PI / -2;
-        baseScale = 9.0;            // 2× the normal enemy scale for an imposing look
+        baseScale = 9.0;
         boss.scale.set(baseScale, baseScale, baseScale);
     } else {
         // Fallback geometry

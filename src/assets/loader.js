@@ -64,15 +64,16 @@ function loadOBJModel(mtlPath, objPath, texturePath, preScale = 1) {
 }
 
 export async function loadAssets() {
-    const models = { player: null, enemy: null, tank: null, enemyDub: null, enemyAtomicBomb: null, envModels: [] };
+    const models = { player: null, enemy: null, tank: null, enemyDub: null, enemyAtomicBomb: null, boss: null, envModels: [] };
 
     try {
-        [models.player, models.enemy, models.tank, models.enemyDub, models.enemyAtomicBomb] = await Promise.all([
+        [models.player, models.enemy, models.tank, models.enemyDub, models.enemyAtomicBomb, models.boss] = await Promise.all([
             loadModel('/models/player.glb'),
             loadModel('/models/enemy.glb'),
             loadModel('/models/tank.glb'),
             loadModel('/models/enemy-dub.glb'),
             loadModel('/models/enemy-atomic-bomb.glb'),
+            loadModel('/models/boss.glb'),
         ]);
 
         const glbEnvPaths = [
@@ -86,7 +87,7 @@ export async function loadAssets() {
             '/models/environment-models/tree/Tree.mtl',
             '/models/environment-models/tree/Tree.obj',
             '/models/environment-models/tree/',
-            0.1
+            0.2
         );
 
         models.envModels = treeModel ? [treeModel, treeModel, treeModel, treeModel, ...glbModels] : glbModels;
