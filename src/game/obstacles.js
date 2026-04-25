@@ -55,14 +55,14 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
         obstacle.rotation.y = Math.PI * 2;
         baseScale = 1.5 + Math.random() * 0.5;
         obstacle.scale.set(baseScale, baseScale, baseScale);
-        applyEmissive(obstacle, 0x00aaff, 0.7);
+        applyEmissive(obstacle, 0x003853, 0.7);
     } else if (models.enemy) {
         obstacle = models.enemy.clone();
         obstacle.rotation.x = 160;
         obstacle.rotation.y = Math.PI / -2;
         baseScale = 1.5 + Math.random() * 0.5;
         obstacle.scale.set(baseScale, baseScale, baseScale);
-        applyEmissive(obstacle, 0xff2200, 0.7);
+        applyEmissive(obstacle, 0x00aaff, 0.7);
     } else {
         const geometry = new THREE.BoxGeometry(7, 7, 7);
         const material = new THREE.MeshStandardMaterial({ color: 0xff4444 });
