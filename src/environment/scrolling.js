@@ -32,7 +32,7 @@ export function setupScrollingEnvironment(scene) {
 
 export function setupSideBuildings(scene, models) {
     const sideBuildings = [];
-    const count = 20;
+    const count = 40;
     const hasModels = models.envModels.length > 0;
 
     for (let i = 0; i < count; i++) {
