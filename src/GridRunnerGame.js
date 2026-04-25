@@ -36,6 +36,7 @@ import {
     resetBombUI
 } from './ui/menus.js';
 import { showLevelBanner, showVictoryBanner, updateLevelHUD } from './ui/levelUI.js';
+import { showTutorial, hideTutorial } from './ui/tutorial.js';
 
 export class GridRunnerGame {
     constructor() {
@@ -149,6 +150,7 @@ export class GridRunnerGame {
     // ── Navigation ────────────────────────────────────────────────────────────
 
     goToMenu() {
+        hideTutorial();
         this._clearScene();
         hideGameOverScreen();
         hideBackMenuButton();
@@ -159,6 +161,7 @@ export class GridRunnerGame {
     }
 
     startGame() {
+        hideTutorial();
         hideStartScreen();
         showBackMenuButton();
         this.gameState.reset();
@@ -205,6 +208,8 @@ export class GridRunnerGame {
         this.lastSpawnTime = 0;                  // first enemy spawns immediately
 
         updateLevelHUD(this.levelManager.currentLevel, 0, cfg.totalEnemies);
+
+        if (this.levelManager.currentLevel === 1) showTutorial();
     }
 
     /**
