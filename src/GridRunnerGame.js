@@ -202,7 +202,7 @@ export class GridRunnerGame {
         this.gameState.spawnInterval = cfg.spawnInterval;
 
         this.levelManager.startLevel();         // resets counts + clears isTransitioning
-        this.lastSpawnTime = Date.now();
+        this.lastSpawnTime = 0;                  // first enemy spawns immediately
 
         updateLevelHUD(this.levelManager.currentLevel, 0, cfg.totalEnemies);
     }
