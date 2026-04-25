@@ -38,6 +38,7 @@ import {
     hideResultsScreen,
 } from './ui/menus.js';
 import { showLevelBanner, showLevelResultBanner, showVictoryBanner, updateLevelHUD } from './ui/levelUI.js';
+import { showTutorial, hideTutorial } from './ui/tutorial.js';
 
 export class GridRunnerGame {
     constructor() {
@@ -159,6 +160,7 @@ export class GridRunnerGame {
     // ── Navigation ────────────────────────────────────────────────────────────
 
     goToMenu() {
+        hideTutorial();
         this._clearScene();
         hideGameOverScreen();
         hideResultsScreen();
@@ -170,6 +172,7 @@ export class GridRunnerGame {
     }
 
     startGame() {
+        hideTutorial();
         hideStartScreen();
         showBackMenuButton();
         this.gameState.reset();
@@ -192,6 +195,16 @@ export class GridRunnerGame {
         showLevelBanner(1, false, () => {
             if (this.gameState.state === 'PLAYING') this._applyLevelConfig();
         });
+
+        // Fallback: if banner callback timing is interrupted, still show tutorial.
+        setTimeout(() => {
+            if (this.gameState.state === 'PLAYING' && this.levelManager.currentLevel === 1) {
+                const overlay = document.getElementById('tutorial-overlay');
+                if (overlay && overlay.classList.contains('hidden')) {
+                    showTutorial();
+                }
+            }
+        }, 2300);
     }
 
     restartGame() {
@@ -218,6 +231,8 @@ export class GridRunnerGame {
         this.lastSpawnTime = 0;                  // first enemy spawns immediately
 
         updateLevelHUD(this.levelManager.currentLevel, 0, cfg.totalEnemies);
+
+        if (this.levelManager.currentLevel === 1) showTutorial();
     }
 
     /**

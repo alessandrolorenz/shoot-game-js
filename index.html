@@ -138,6 +138,50 @@
         <!-- Bomb Button (mobile) -->
         <button id="btn-bomb">💣</button>
 
+        <!-- Level 1 Tutorial Overlay -->
+        <div id="tutorial-overlay" class="hidden">
+            <div id="tutorial-card">
+                <div class="tut-incoming">
+                    <span class="tut-arr" style="--td:0s">▼</span>
+                    <span class="tut-arr" style="--td:0.18s">▼</span>
+                    <span class="tut-arr" style="--td:0.36s">▼</span>
+                    <span class="tut-incoming-label">ENEMIES INCOMING</span>
+                    <span class="tut-arr" style="--td:0.36s">▼</span>
+                    <span class="tut-arr" style="--td:0.18s">▼</span>
+                    <span class="tut-arr" style="--td:0s">▼</span>
+                </div>
+                <div class="tut-body">
+                    <div class="tut-move">
+                        <div class="tut-dpad">
+                            <div class="tut-dpad-top">
+                                <div class="tut-key tut-key-up">↑<span class="tut-k2">W</span></div>
+                            </div>
+                            <div class="tut-dpad-mid">
+                                <div class="tut-key tut-key-left">←<span class="tut-k2">A</span></div>
+                                <div class="tut-key tut-key-down">↓<span class="tut-k2">S</span></div>
+                                <div class="tut-key tut-key-right">→<span class="tut-k2">D</span></div>
+                            </div>
+                        </div>
+                        <div class="tut-move-labels">
+                            <div class="tut-dodge">DODGE!</div>
+                            <div class="tut-swipe">or Swipe</div>
+                        </div>
+                    </div>
+                    <div class="tut-sep"></div>
+                    <div class="tut-tips">
+                        <div class="tut-tip" style="--td:0.3s">
+                            <span class="tut-tip-icon">🔫</span>
+                            <span><b>Auto fires</b> — aim at enemies</span>
+                        </div>
+                        <div class="tut-tip" style="--td:0.65s">
+                            <span class="tut-tip-icon">💣</span>
+                            <span><b>10 kills</b> → BOMB <kbd class="tut-kbd">B</kbd></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module" src="/src/main.js"></script>
