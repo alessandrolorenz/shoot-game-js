@@ -8,7 +8,7 @@ export function createPlayer(scene, models) {
         player = models.player.clone();
         player.scale.set(2.4, 2.4, 2.4);
         // Face down the lane toward negative Z (forward direction in this game).
-        player.rotation.y = Math.PI;
+        player.rotation.y = -Math.PI / 2;
     } else {
         const geometry = new THREE.ConeGeometry(0.5, 1.5, 8);
         const material = new THREE.MeshStandardMaterial({ color: 0x00ff88 });
