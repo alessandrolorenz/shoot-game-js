@@ -4,9 +4,9 @@ import { CONFIG } from '../config.js';
 export function setupGround(scene) {
     const groundGeometry = new THREE.PlaneGeometry(50, 100);
     const groundMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1a1a2e,
-        roughness: 0.8,
-        metalness: 0.2
+        color: 0x5dc85d,
+        roughness: 0.9,
+        metalness: 0.0
     });
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
@@ -20,9 +20,9 @@ export function setupGround(scene) {
 function createLaneMarkers(scene) {
     const markerGeometry = new THREE.BoxGeometry(0.1, 0.1, 100);
     const markerMaterial = new THREE.MeshBasicMaterial({
-        color: 0x00ff88,
+        color: 0xffffff,
         transparent: true,
-        opacity: 0.3
+        opacity: 0.55
     });
 
     for (let x = 0; x < CONFIG.GRID.X_POSITIONS; x++) {

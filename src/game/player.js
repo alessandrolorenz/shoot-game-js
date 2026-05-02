@@ -16,6 +16,14 @@ export function createPlayer(scene, models) {
         player.rotation.x = Math.PI * 0.2;
     }
 
+    player.traverse(child => {
+        if (child.isMesh && child.material) {
+            child.material = child.material.clone();
+            child.material.emissive = new THREE.Color(0x226622);
+            child.material.emissiveIntensity = 0.35;
+        }
+    });
+
     player.castShadow = true;
     scene.add(player);
     return player;

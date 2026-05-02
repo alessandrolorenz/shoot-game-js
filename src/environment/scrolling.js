@@ -4,7 +4,7 @@ export function setupScrollingEnvironment(scene) {
     const groundTiles = [];
     const roadStripes = [];
 
-    const tileMat = new THREE.MeshStandardMaterial({ color: 0x0d0d1f, roughness: 0.9 });
+    const tileMat = new THREE.MeshStandardMaterial({ color: 0x5dc85d, roughness: 0.9 });
     for (let i = 0; i < 3; i++) {
         const tile = new THREE.Mesh(new THREE.PlaneGeometry(18, 40), tileMat);
         tile.rotation.x = -Math.PI / 2;
@@ -15,9 +15,9 @@ export function setupScrollingEnvironment(scene) {
     }
 
     const stripeMat = new THREE.MeshBasicMaterial({
-        color: 0x00ff88,
+        color: 0xffffff,
         transparent: true,
-        opacity: 0.18
+        opacity: 0.50
     });
     for (let i = 0; i < 10; i++) {
         const stripe = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 5), stripeMat);
@@ -60,20 +60,22 @@ export function setupSideBuildings(scene, models) {
                 const w = 1.0 + Math.random() * 1.8;
                 const d = 1.0 + Math.random() * 1.5;
                 const hasGlow = Math.random() > 0.5;
-                const glowColor = Math.random() > 0.5 ? 0x003311 : 0x000a22;
+                const glowColor = Math.random() > 0.5 ? 0xff8844 : 0xffee44;
+                const bodyColors = [0xf7c59f, 0xaad4f5, 0xc8f5aa, 0xf5d0f0, 0xf5f0aa];
+                const bodyColor = bodyColors[Math.floor(Math.random() * bodyColors.length)];
                 const mat = new THREE.MeshStandardMaterial({
-                    color: 0x080812,
+                    color: bodyColor,
                     emissive: hasGlow ? glowColor : 0x000000,
-                    emissiveIntensity: 1.0
+                    emissiveIntensity: 0.4
                 });
                 obj = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
                 obj.position.set(xOffset, -3 + h / 2, zPos);
 
                 if (hasGlow) {
                     const roofMat = new THREE.MeshBasicMaterial({
-                        color: Math.random() > 0.5 ? 0x00ff88 : 0x0055ff,
+                        color: Math.random() > 0.5 ? 0xff4466 : 0xff9900,
                         transparent: true,
-                        opacity: 0.85
+                        opacity: 1.0
                     });
                     const roof = new THREE.Mesh(
                         new THREE.BoxGeometry(w + 0.1, 0.08, d + 0.1),
@@ -98,7 +100,7 @@ export function setupSideBuildings(scene, models) {
 export function setupGroundRocks(scene) {
     const count = 40;
     const geo = new THREE.IcosahedronGeometry(0.55, 0); // flat-shaded low-poly = rock look
-    const mat = new THREE.MeshStandardMaterial({ color: 0x4a4f5a, roughness: 1.0, flatShading: true });
+    const mat = new THREE.MeshStandardMaterial({ color: 0xc8a882, roughness: 1.0, flatShading: true });
     const mesh = new THREE.InstancedMesh(geo, mat, count);
     mesh.castShadow = false;
     mesh.receiveShadow = false;

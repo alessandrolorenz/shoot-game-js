@@ -11,9 +11,9 @@ export function setupParticles(scene) {
         positions[i * 3 + 2] = -(Math.random() * 100);
 
         const t = Math.random();
-        colors[i * 3]     = t * 0.2;
-        colors[i * 3 + 1] = 0.55 + t * 0.45;
-        colors[i * 3 + 2] = 0.4 + (1 - t) * 0.6;
+        colors[i * 3]     = 0.85 + t * 0.15;
+        colors[i * 3 + 1] = 0.40 + t * 0.50;
+        colors[i * 3 + 2] = 0.30 + (1 - t) * 0.40;
     }
 
     const geo = new THREE.BufferGeometry();
@@ -21,10 +21,10 @@ export function setupParticles(scene) {
     geo.setAttribute('color',    new THREE.BufferAttribute(colors, 3));
 
     const mat = new THREE.PointsMaterial({
-        size: 0.07,
+        size: 0.10,
         vertexColors: true,
         transparent: true,
-        opacity: 0.75,
+        opacity: 0.85,
         sizeAttenuation: true,
         depthWrite: false
     });
