@@ -80,6 +80,7 @@ export async function loadAssets() {
             '/models/environment-models/pixellabs-mine-3769.glb',
             '/models/environment-models/pixellabs-watermill-3425.glb',
             '/models/environment-models/watchtouwer.glb',
+            '/models/environment-models/cartoony-war-scenery.glb',
         ];
         const glbModels = (await Promise.all(glbEnvPaths.map(loadModel))).filter(Boolean);
 
