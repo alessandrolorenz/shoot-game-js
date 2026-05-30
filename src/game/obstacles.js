@@ -45,9 +45,9 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
 
     if (enemyType === 'tank' && models.tank) {
         obstacle = models.tank.clone();
-        baseScale = 2.0 + Math.random() * 0.4;
+        baseScale = 1.4 + Math.random() * 0.3;
         obstacle.scale.setScalar(baseScale);
-        obstacle.rotation.x = 0;
+        obstacle.rotation.x = Math.PI;
         obstacle.rotation.y = Math.random() * Math.PI * 2;
         applyEmissive(obstacle, 0x44bb22, 0.5);
     } else if (enemyType === 'enemyDub' && models.enemyDub) {
@@ -114,6 +114,8 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
         nextDodgeZ:     CONFIG.ENEMY_DODGE.SWITCH_Z,
         // Coins spin each frame; tanks don't
         spinRate:       isTank ? 0 : 0.05,
+        // Money bag sits above ground plane; other obstacles stay at grid Y
+        positionYOffset: isTank ? 1.0 : 0,
     };
 
     updateObstaclePosition(obstacle);
@@ -134,7 +136,7 @@ export function updateObstaclePosition(obstacle) {
     } else {
         worldX = (obstacle.userData.gridX - 1) * CONFIG.GRID.SPACING;
     }
-    const worldY = (obstacle.userData.gridY - 1) * CONFIG.GRID.SPACING;
+    const worldY = (obstacle.userData.gridY - 1) * CONFIG.GRID.SPACING + (obstacle.userData.positionYOffset || 0);
 
     obstacle.position.set(worldX, worldY, obstacle.userData.z);
 
