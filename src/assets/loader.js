@@ -64,7 +64,7 @@ function loadOBJModel(mtlPath, objPath, texturePath, preScale = 1) {
 }
 
 export async function loadAssets() {
-    const models = { player: null, enemy: null, tank: null, enemyDub: null, enemyAtomicBomb: null, boss: null, envModels: [] };
+    const models = { player: null, enemy: null, tank: null, enemyDub: null, enemyAtomicBomb: null, boss: null, envModels: [], warScenery: null };
 
     try {
         [models.player, models.enemy, models.tank, models.enemyDub, models.enemyAtomicBomb, models.boss] = await Promise.all([
@@ -81,7 +81,11 @@ export async function loadAssets() {
             '/models/environment-models/pixellabs-watermill-3425.glb',
             '/models/environment-models/watchtouwer.glb',
         ];
-        const glbModels = (await Promise.all(glbEnvPaths.map(loadModel))).filter(Boolean);
+        const [glbModels, warScenery] = await Promise.all([
+            Promise.all(glbEnvPaths.map(loadModel)).then(r => r.filter(Boolean)),
+            loadModel('/models/environment-models/cartoony-war-scenery.glb'),
+        ]);
+        models.warScenery = warScenery;
 
         const treeModel = await loadOBJModel(
             '/models/environment-models/tree/Tree.mtl',

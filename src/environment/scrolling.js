@@ -94,6 +94,28 @@ export function setupSideBuildings(scene, models) {
         }
     }
 
+    // War scenery: small scale + large X offset so aircraft shapes stay clear of
+    // the play field (the model is ~1.84 units wide; at scale ≤3 the inner edge
+    // stays beyond x=±5.5, well outside the ±2.5 obstacle columns).
+    if (models.warScenery) {
+        for (let i = 0; i < 14; i++) {
+            for (const side of [-1, 1]) {
+                const obj = models.warScenery.clone();
+                const s = 2.0 + Math.random() * 1.0;
+                obj.scale.setScalar(s);
+                obj.position.set(
+                    side * (8.0 + Math.random() * 1.5),
+                    -3,
+                    -i * 22 - Math.random() * 10
+                );
+                obj.rotation.y = Math.random() * Math.PI * 2;
+                obj.castShadow = true;
+                scene.add(obj);
+                sideBuildings.push(obj);
+            }
+        }
+    }
+
     return sideBuildings;
 }
 
