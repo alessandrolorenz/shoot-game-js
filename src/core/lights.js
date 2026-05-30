@@ -13,6 +13,6 @@ export function setupLights(scene) {
     dirLight.shadow.camera.bottom = -20;
     scene.add(dirLight);
 
-    const hemiLight = new THREE.HemisphereLight(0xffeebb, 0x88cc44, 1.1);
+    const hemiLight = new THREE.HemisphereLight(0xffeebb, 0x4a6e28, 1.1);
     scene.add(hemiLight);
 }
