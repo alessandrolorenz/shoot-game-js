@@ -4,7 +4,7 @@ export function setupScrollingEnvironment(scene) {
     const groundTiles = [];
     const roadStripes = [];
 
-    const tileMat = new THREE.MeshStandardMaterial({ color: 0x5dc85d, roughness: 0.9 });
+    const tileMat = new THREE.MeshStandardMaterial({ color: 0x4a7c3f, roughness: 0.9 });
     for (let i = 0; i < 3; i++) {
         const tile = new THREE.Mesh(new THREE.PlaneGeometry(18, 40), tileMat);
         tile.rotation.x = -Math.PI / 2;
@@ -17,7 +17,7 @@ export function setupScrollingEnvironment(scene) {
     const stripeMat = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
-        opacity: 0.50
+        opacity: 0.30
     });
     for (let i = 0; i < 10; i++) {
         const stripe = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 5), stripeMat);
@@ -60,8 +60,8 @@ export function setupSideBuildings(scene, models) {
                 const w = 1.0 + Math.random() * 1.8;
                 const d = 1.0 + Math.random() * 1.5;
                 const hasGlow = Math.random() > 0.5;
-                const glowColor = Math.random() > 0.5 ? 0xff8844 : 0xffee44;
-                const bodyColors = [0xf7c59f, 0xaad4f5, 0xc8f5aa, 0xf5d0f0, 0xf5f0aa];
+                const glowColor = Math.random() > 0.5 ? 0xcc6622 : 0xddcc22;
+                const bodyColors = [0xb8956a, 0x7a9e6e, 0x8fa3b1, 0xc4956a, 0xa09060];
                 const bodyColor = bodyColors[Math.floor(Math.random() * bodyColors.length)];
                 const mat = new THREE.MeshStandardMaterial({
                     color: bodyColor,
@@ -73,7 +73,7 @@ export function setupSideBuildings(scene, models) {
 
                 if (hasGlow) {
                     const roofMat = new THREE.MeshBasicMaterial({
-                        color: Math.random() > 0.5 ? 0xff4466 : 0xff9900,
+                        color: Math.random() > 0.5 ? 0xcc3344 : 0xcc7700,
                         transparent: true,
                         opacity: 1.0
                     });
@@ -122,7 +122,7 @@ export function setupSideBuildings(scene, models) {
 export function setupGroundRocks(scene) {
     const count = 40;
     const geo = new THREE.IcosahedronGeometry(0.55, 0); // flat-shaded low-poly = rock look
-    const mat = new THREE.MeshStandardMaterial({ color: 0xc8a882, roughness: 1.0, flatShading: true });
+    const mat = new THREE.MeshStandardMaterial({ color: 0xb89968, roughness: 1.0, flatShading: true });
     const mesh = new THREE.InstancedMesh(geo, mat, count);
     mesh.castShadow = false;
     mesh.receiveShadow = false;

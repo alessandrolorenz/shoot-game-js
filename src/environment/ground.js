@@ -4,7 +4,7 @@ import { CONFIG } from '../config.js';
 export function setupGround(scene) {
     const groundGeometry = new THREE.PlaneGeometry(50, 100);
     const groundMaterial = new THREE.MeshStandardMaterial({
-        color: 0x5dc85d,
+        color: 0x4a7c3f,
         roughness: 0.9,
         metalness: 0.0
     });
@@ -22,7 +22,7 @@ function createLaneMarkers(scene) {
     const markerMaterial = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
-        opacity: 0.55
+        opacity: 0.35
     });
 
     for (let x = 0; x < CONFIG.GRID.X_POSITIONS; x++) {
