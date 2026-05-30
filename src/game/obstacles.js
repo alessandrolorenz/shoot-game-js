@@ -55,7 +55,7 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
         // Silver coin is flat (XZ plane) — rotate 90° so it faces the player
         obstacle.rotation.x = Math.PI / 2;
         obstacle.rotation.y = Math.random() * Math.PI * 2;
-        baseScale = 2.0 + Math.random() * 0.5;
+        baseScale = 1.2 + Math.random() * 0.3;
         obstacle.scale.setScalar(baseScale);
         applyEmissive(obstacle, 0x9999bb, 0.4);
     } else if (models.enemy) {
@@ -63,7 +63,7 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
         // Golden coin stands upright, face already toward camera
         obstacle.rotation.x = 0;
         obstacle.rotation.y = Math.random() * Math.PI * 2;
-        baseScale = 2.0 + Math.random() * 0.5;
+        baseScale = 1.2 + Math.random() * 0.3;
         obstacle.scale.setScalar(baseScale);
         applyEmissive(obstacle, 0xddaa00, 0.5);
     } else {
