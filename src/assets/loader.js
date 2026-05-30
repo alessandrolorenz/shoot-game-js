@@ -68,7 +68,7 @@ export async function loadAssets() {
 
     try {
         [models.player, models.enemy, models.tank, models.enemyDub, models.enemyAtomicBomb, models.boss] = await Promise.all([
-            loadModel('/models/player-new.glb'),
+            loadModel('/models/player-airplane.glb'),
             loadModel('/models/golden-coin.glb'),
             loadModel('/models/ground-garbage.glb'),
             loadModel('/models/silver-coin.glb'),
