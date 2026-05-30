@@ -6,8 +6,8 @@ export function createPlayer(scene, models) {
 
     if (models.player) {
         player = models.player.clone();
-        player.scale.set(2.4, 2.4, 2.4);
-        player.rotation.y = Math.PI;
+        player.scale.set(1.8, 1.8, 1.8);
+        player.rotation.y = -Math.PI / 2;
     } else {
         const geometry = new THREE.ConeGeometry(0.5, 1.5, 8);
         const material = new THREE.MeshStandardMaterial({ color: 0x00ff88 });
