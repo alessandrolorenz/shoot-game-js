@@ -45,11 +45,11 @@ export function createObstacle(scene, obstacles, models, gameState, levelConfig)
 
     if (enemyType === 'tank' && models.tank) {
         obstacle = models.tank.clone();
-        baseScale = 2.5 + Math.random() * 0.5;
+        baseScale = 2.0 + Math.random() * 0.4;
         obstacle.scale.setScalar(baseScale);
-        obstacle.rotation.x = 160;
-        obstacle.rotation.y = Math.PI / 2;
-        applyEmissive(obstacle, 0xff6600, 0.7);
+        obstacle.rotation.x = 0;
+        obstacle.rotation.y = Math.random() * Math.PI * 2;
+        applyEmissive(obstacle, 0x44bb22, 0.5);
     } else if (enemyType === 'enemyDub' && models.enemyDub) {
         obstacle = models.enemyDub.clone();
         // Silver coin is flat (XZ plane) — rotate 90° so it faces the player
