@@ -10,7 +10,7 @@ export function setupGround(scene) {
     });
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
-    ground.position.y = -3;
+    ground.position.y = -5;
     ground.receiveShadow = true;
     scene.add(ground);
 

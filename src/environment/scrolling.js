@@ -8,7 +8,7 @@ export function setupScrollingEnvironment(scene) {
     for (let i = 0; i < 3; i++) {
         const tile = new THREE.Mesh(new THREE.PlaneGeometry(18, 40), tileMat);
         tile.rotation.x = -Math.PI / 2;
-        tile.position.set(0, -3.5, 10 - i * 40);
+        tile.position.set(0, -5, 10 - i * 40);
         tile.receiveShadow = true;
         scene.add(tile);
         groundTiles.push(tile);
@@ -54,7 +54,7 @@ export function setupSideBuildings(scene, models) {
                 // Random Y rotation for variety
                 obj.rotation.y = side === 1 ? Math.PI + (Math.random() - 0.5) * 0.6
                                             : (Math.random() - 0.5) * 0.6;
-                obj.position.set(xOffset, -3, zPos);
+                obj.position.set(xOffset, -5, zPos);
             } else {
                 const h = 2 + Math.random() * 7;
                 const w = 1.0 + Math.random() * 1.8;
@@ -109,7 +109,7 @@ export function setupGroundRocks(scene) {
     for (let i = 0; i < count; i++) {
         dummy.position.set(
             (Math.random() - 0.5) * 16,
-            -3.45 + Math.random() * 0.15,
+            -4.85 + Math.random() * 0.15,
             -Math.random() * 120
         );
         dummy.scale.setScalar(0.4 + Math.random() * 0.7);
