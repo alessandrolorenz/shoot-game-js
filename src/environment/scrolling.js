@@ -54,7 +54,7 @@ export function setupSideBuildings(scene, models) {
                 // Random Y rotation for variety
                 obj.rotation.y = side === 1 ? Math.PI + (Math.random() - 0.5) * 0.6
                                             : (Math.random() - 0.5) * 0.6;
-                obj.position.set(xOffset, -5, zPos);
+                obj.position.set(xOffset, -3, zPos);
             } else {
                 const h = 2 + Math.random() * 7;
                 const w = 1.0 + Math.random() * 1.8;
