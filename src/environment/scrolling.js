@@ -8,7 +8,7 @@ export function setupScrollingEnvironment(scene) {
     for (let i = 0; i < 3; i++) {
         const tile = new THREE.Mesh(new THREE.PlaneGeometry(18, 40), tileMat);
         tile.rotation.x = -Math.PI / 2;
-        tile.position.set(0, -3.5, 10 - i * 40);
+        tile.position.set(0, -5, 10 - i * 40);
         tile.receiveShadow = true;
         scene.add(tile);
         groundTiles.push(tile);
@@ -42,14 +42,14 @@ export function setupSideBuildings(scene, models) {
             // Wider slot spacing with large random jitter for irregular gaps
             const zPos = -i * 14 - Math.random() * 10;
             // Closer to the play field and with more X variance
-            const xOffset = side * (5.5 + Math.random() * 2.0);
+            const xOffset = side * (8.0 + Math.random() * 8.0);
 
             if (hasModels) {
                 const template = models.envModels[
                     Math.floor(Math.random() * models.envModels.length)
                 ];
                 obj = template.clone();
-                const s = 4.0 + Math.random() * 2.5;
+                const s = 2.0 + Math.random() * 1.5;
                 obj.scale.setScalar(s);
                 // Random Y rotation for variety
                 obj.rotation.y = side === 1 ? Math.PI + (Math.random() - 0.5) * 0.6
@@ -94,28 +94,6 @@ export function setupSideBuildings(scene, models) {
         }
     }
 
-    // War scenery: small scale + large X offset so aircraft shapes stay clear of
-    // the play field (the model is ~1.84 units wide; at scale ≤3 the inner edge
-    // stays beyond x=±5.5, well outside the ±2.5 obstacle columns).
-    if (models.warScenery) {
-        for (let i = 0; i < 14; i++) {
-            for (const side of [-1, 1]) {
-                const obj = models.warScenery.clone();
-                const s = 2.0 + Math.random() * 1.0;
-                obj.scale.setScalar(s);
-                obj.position.set(
-                    side * (8.0 + Math.random() * 1.5),
-                    -3,
-                    -i * 22 - Math.random() * 10
-                );
-                obj.rotation.y = Math.random() * Math.PI * 2;
-                obj.castShadow = true;
-                scene.add(obj);
-                sideBuildings.push(obj);
-            }
-        }
-    }
-
     return sideBuildings;
 }
 
@@ -131,7 +109,7 @@ export function setupGroundRocks(scene) {
     for (let i = 0; i < count; i++) {
         dummy.position.set(
             (Math.random() - 0.5) * 16,
-            -3.45 + Math.random() * 0.15,
+            -4.85 + Math.random() * 0.15,
             -Math.random() * 120
         );
         dummy.scale.setScalar(0.4 + Math.random() * 0.7);
