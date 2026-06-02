@@ -42,14 +42,14 @@ export function setupSideBuildings(scene, models) {
             // Wider slot spacing with large random jitter for irregular gaps
             const zPos = -i * 14 - Math.random() * 10;
             // Closer to the play field and with more X variance
-            const xOffset = side * (5.5 + Math.random() * 2.0);
+            const xOffset = side * (10.0 + Math.random() * 2.5);
 
             if (hasModels) {
                 const template = models.envModels[
                     Math.floor(Math.random() * models.envModels.length)
                 ];
                 obj = template.clone();
-                const s = 4.0 + Math.random() * 2.5;
+                const s = 2.0 + Math.random() * 1.5;
                 obj.scale.setScalar(s);
                 // Random Y rotation for variety
                 obj.rotation.y = side === 1 ? Math.PI + (Math.random() - 0.5) * 0.6
